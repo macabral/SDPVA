@@ -1,0 +1,23 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>
+    <i class="fa fa-file-text"></i> Arquivos APRun</strong></h1></div>
+    <div class="panel panel-body">
+        <h5>
+            <button type="button" class="btn btn-info" onclick="fVoltar();"> Voltar </button>
+        </h5>
+        <br />
+        <a href="/SDPVA/public/downloads/APRun_1_47.msi" download>APRun_1_47.msi - Instalador do APRun</a><br/>
+        <a href="/SDPVA/public/downloads/APRun_Manual_1_22.pdf" download target="_blank">Manual do APRun</a><br/>
+        <br /><br />
+        <?php
+        $t = count($this->arquivos);
+        for ($i=0;$i<$t;$i++) { ?>
+            <a href="<?php echo APP_APRUN2.$this->arquivos[$i]; ?>" download><?php echo $this->arquivos[$i]; ?></a>&nbsp;&nbsp;
+        <?php } ?>
+    </div>
+</div>
+<script type="text/javascript">
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+</script>

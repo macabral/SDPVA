@@ -1,0 +1,315 @@
+<!--
+// visualização dos EMS Wind
+// HistoricoController
+-->
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>EMS Wind</strong></h1></div>
+    <div class="panel panel-body">
+        <h5>
+            <button type="button" class="btn btn-info" onclick="fVoltar();"> Voltar </button>
+        </h5>
+
+                <table id="cab" class="display" width='100%' border="1">
+                    <tr>
+                        <td>wd2a</td>
+                        <td>Wind direction 2-minute average</td>
+                        <td>wd10a</td>
+                        <td>Wind speed 10-minute average</td>
+                    </tr>
+                    <tr>
+                        <td>ws2a</td>
+                        <td>Wind speed 2-minute average</td>
+                        <td>ws10a</td>
+                        <td>Wind speed 10-minute average</td>
+                    </tr>
+                    <tr>
+                        <td>wd2m</td>
+                        <td>Wind direction 2-minute minimum</td>
+                        <td>wd10m</td>
+                        <td>Wind direction 10-minute minimum</td>
+                    </tr>
+                    <tr>
+                        <td>ws2m</td>
+                        <td>Wind speed 2-minute minimum</td>
+                        <td>ws10m</td>
+                        <td>Wind speed 10-minute minimum</td>
+                    </tr>
+                    <tr>
+                        <td>wd2x</td>
+                        <td>Wind direction 2-minute maximum</td>
+                        <td>wd10x</td>
+                        <td>Wind direction 10-minute maximum</td>
+                    </tr>
+                    <tr>
+                        <td>ws2x</td>
+                        <td>Wind speed 2-minute maximum</td>
+                        <td>ws10x</td>
+                        <td>Wind speed 10-minute maximum</td>
+                    </tr>
+                </table>
+
+           <div id="canvas-holder1" style="width:100%;height: 75%;">
+                <canvas id="chart1"/>
+           </div>
+            <div id="canvas-holder1" style="width:100%;height: 75%;">
+                <canvas id="chart2"/>
+           </div>
+        <div>
+            <form name="myform" method="post" action="<?php echo APPLICATION_DIR; ?>/historico/emswind">
+                <table class="tableForm" style="width:100%;">
+                    <tr>
+                        <td class="td1Form" style="width:140px;text-align:right;">
+                            <label for="dt1">Data&nbsp;</label>
+                            <input  type="text" name="dt1" id="dt1" class="tcal" style="width: 100px;" value="<?php echo $this->dt1 ?>"/>
+                            <input type="button" id="btnSalvar" onclick="fsalvar();" value="Filtrar">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+<?php if (!empty($this->data)) { ?>
+                <table id="mytab" class="display" width='100%'>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>runway</th>
+                            <th>wd2a</th>
+                            <th>ws2a</th>
+                            <th>wd2m</th>
+                            <th>ws2m</th>
+                            <th>wd2x</th>
+                            <th>ws2x</th>
+                            <th>wd10a</th>
+                            <th>ws10a</th>
+                            <th>wd10m</th>
+                            <th>ws10m</th>
+                            <th>wd10x</th>
+                            <th>ws10x</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($this->data as $d) {
+                            $date = new Zend_Date($d['timestamp']);
+                            $mydata = $date->toString("dd/MM/yyyy HH:mm");
+                            ?>
+                            <tr>
+                                <td><?php echo $this->escape($mydata) ?></td>
+                                <td><?php echo $this->escape($d['runway']) ?></td>
+                                <td><?php echo $this->escape($d['wd2a']) ?></td>
+                                <td><?php echo $this->escape($d['ws2a']) ?></td>
+                                <td><?php echo $this->escape($d['wd2m']) ?></td>
+                                <td><?php echo $this->escape($d['ws2m']) ?></td>
+                                <td><?php echo $this->escape($d['wd2x']) ?></td>
+                                <td><?php echo $this->escape($d['ws2x']) ?></td>
+                                <td><?php echo $this->escape($d['wd10a']) ?></td>
+                                <td><?php echo $this->escape($d['ws10a']) ?></td>
+                                <td><?php echo $this->escape($d['wd10m']) ?></td>
+                                <td><?php echo $this->escape($d['ws10m']) ?></td>
+                                <td><?php echo $this->escape($d['wd10x']) ?></td>
+                                <td><?php echo $this->escape($d['ws10x']) ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                    </tbody>
+                </table>
+            <p>Limite de 2000 registros exibidos.</p>
+                <?php
+            } else {
+                echo "Não foram encontrados registros.";
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#mytab').DataTable(
+                {
+                    "order": [[0, "desc"]],
+                    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Todas"]],
+                    language: {
+                        "sEmptyTable": "Nenhum registro encontrado",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "_MENU_ resultados por página",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "sSearch": "Pesquisar ",
+                        "oPaginate": {
+                            "sNext": " Próximo",
+                            "sPrevious": "Anterior ",
+                            "sFirst": "Primeiro",
+                            "sLast": "Último"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Ordenar colunas de forma ascendente",
+                            "sSortDescending": ": Ordenar colunas de forma descendente"
+                        }
+                    }
+                }
+        );
+    });
+   
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+    function fsalvar() {
+        if (!isDate(document.getElementById('dt1').value)) {
+            alert("Por favor, preencha o valor correto no campo [Data de Início].");
+            document.forms["myform"].dt1.focus();
+            return;
+        }
+        document.forms["myform"].submit();
+    }
+    
+    
+</script>
+
+  <script>
+    window.count = 0;
+    Chart.defaults.global.pointHitDetectionRadius = 1;
+    var customTooltips = function(tooltip) {
+
+      // Tooltip Element
+      var tooltipEl = $('#chartjs-tooltip');
+
+      if (!tooltipEl[0]) {
+        $('body').append('<div id="chartjs-tooltip"></div>');
+        tooltipEl = $('#chartjs-tooltip');
+      }
+
+      // Hide if no tooltip
+      if (!tooltip.opacity) {
+        tooltipEl.css({
+          opacity: 0
+        });
+        $('.chartjs-wrap canvas')
+          .each(function(index, el) {
+            $(el).css('cursor', 'default');
+          });
+        return;
+      }
+
+      $(this._chart.canvas).css('cursor', 'pointer');
+
+      // Set caret Position
+      tooltipEl.removeClass('above below no-transform');
+      if (tooltip.yAlign) {
+        tooltipEl.addClass(tooltip.yAlign);
+      } else {
+        tooltipEl.addClass('no-transform');
+      }
+
+      // Set Text
+      if (tooltip.body) {
+        var innerHtml = [
+          (tooltip.beforeTitle || []).join('\n'), (tooltip.title || []).join('\n'), (tooltip.afterTitle || []).join('\n'), (tooltip.beforeBody || []).join('\n'), (tooltip.body || []).join('\n'), (tooltip.afterBody || []).join('\n'), (tooltip.beforeFooter || [])
+          .join('\n'), (tooltip.footer || []).join('\n'), (tooltip.afterFooter || []).join('\n')
+        ];
+        tooltipEl.html(innerHtml.join('\n'));
+      }
+
+      // Find Y Location on page
+      var top = 0;
+      if (tooltip.yAlign) {
+        if (tooltip.yAlign == 'above') {
+          top = tooltip.y - tooltip.caretHeight - tooltip.caretPadding;
+        } else {
+          top = tooltip.y + tooltip.caretHeight + tooltip.caretPadding;
+        }
+      }
+
+      var position = $(this._chart.canvas)[0].getBoundingClientRect();
+
+      // Display, position, and set styles for font
+      tooltipEl.css({
+        opacity: 2,
+        width: tooltip.width ? (tooltip.width + 'px') : 'auto',
+        left: position.left + tooltip.x + 'px',
+        top: position.top + top + 'px',
+        fontFamily: tooltip._fontFamily,
+        fontSize: tooltip.fontSize,
+        fontStyle: tooltip._fontStyle,
+        padding: tooltip.yPadding + 'px ' + tooltip.xPadding + 'px',
+      });
+    };
+
+    var lineChartData1 = {
+      labels: [<?php echo $this->label; ?>],
+      datasets: [{
+        label: "Mínimo",
+        data: [<?php echo $this->smin; ?>]
+      },
+      {
+        label: "Médio",
+        data: [<?php echo $this->savg; ?>]
+      },
+      {
+        label: "Máximo",
+        data: [<?php echo $this->smax; ?>]
+      },
+      {
+        label: "Prognostico",
+        data: [<?php echo $this->sprog; ?>]
+      }]
+    };
+    
+    var lineChartData2 = {
+      labels: [<?php echo $this->label; ?>],
+      datasets: [{
+        label: "Mínimo",
+        data: [<?php echo $this->dmin; ?>]
+      },
+      {
+        label: "Médio",
+        data: [<?php echo $this->davg; ?>]
+      },
+      {
+        label: "Máximo",
+        data: [<?php echo $this->dmax; ?>]
+      },
+      {
+        label: "Prognostico",
+        data: [<?php echo $this->dprog; ?>]
+      }]
+    };
+
+    window.onload = function() {
+      var chartEl = document.getElementById("chart1");
+      window.myLine = new Chart(chartEl, {
+        type: 'line',
+        data: lineChartData1,
+        options: {
+          title:{
+            display:true,
+            text:'Wind Speed 2-minute - 09R'
+          },
+          tooltips: {
+            enabled: false,
+            custom: customTooltips
+          }
+        }
+      });
+      
+      var chartEl = document.getElementById("chart2");
+      window.myLine = new Chart(chartEl, {
+        type: 'line',
+        data: lineChartData2,
+        options: {
+          title:{
+            display:true,
+            text:'Wind Direction 2-minute - 09R'
+          },
+          tooltips: {
+            enabled: false,
+            custom: customTooltips
+          }
+        }
+      });
+    };
+  </script>

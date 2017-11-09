@@ -1,0 +1,164 @@
+<?php
+
+class UserController extends Zend_Controller_Action {
+
+    protected $_logger;
+    protected $_db;
+
+    public function preDispatch() {
+        if (!Zend_Auth::getInstance()->hasIdentity()) {
+            $this->_redirect('login');
+        }
+    }
+
+    public function init() {
+        /* Initialize action controller here */
+
+        $this->_userid = Zend_Auth::getInstance()->getIdentity()->idusu;
+        $this->_admin = Zend_Auth::getInstance()->getIdentity()->admin;
+        $this->_username = Zend_Auth::getInstance()->getIdentity()->login;
+        $this->_db = Zend_Db_Table::getDefaultAdapter();
+
+        if (!$this->_admin) {
+            $this->_redirect('login/logout');
+        }
+        Zend_Loader::loadFile('UserDB.php');
+    }
+
+    public function indexAction() {
+        $this->view->mensagem = "Lista de Usuários";
+        $userdb = new UserDB();
+        $this->view->usuData = $userdb->getAllUsers();
+    }
+
+    public function caduserAction() {
+
+        $userdb = new UserDB();
+
+        $iduser = $this->_getParam("iduser", 1);
+
+        $request = $this->getRequest();
+
+        // Check if we have a POST request
+        if ($request->isPost()) {
+            // Inserindo 
+            $fd = $this->getRequest()->getPost();
+            if (isset($fd['ativo'])) {
+                $fd['ativo'] = 1;
+            } else {
+                $fd['ativo'] = 0;
+            }
+            if (isset($fd['admin'])) {
+                $fd['admin'] = 1;
+            } else {
+                $fd['admin'] = 0;
+            }
+            if ($iduser == 0) {
+                $data = array(
+                    'nome' => $fd['nome'],
+                    'login' => $fd['login'],
+                    'ativo' => $fd['ativo'],
+                    'email' => $fd['email'],
+                    'admin' => $fd['admin'],
+                    'senha' => sha1("12345678"),
+                    'trocarsenha' => 1,
+                );
+            } else {
+                $data = array(
+                    'nome' => $fd['nome'],
+                    'login' => $fd['login'],
+                    'ativo' => $fd['ativo'],
+                    'email' => $fd['email'],
+                    'admin' => $fd['admin'],
+                );
+            }
+
+            $dbtable = 'sgso_usuarios';
+            try {
+                if ($iduser == 0) {
+                    $this->_db->insert($dbtable, $data);
+                    $iduser = $userdb->getLastId();
+                    $this->view->errorMsg = "Registro incluído.";
+                    $this->_helper->Logger->gravarlog('info', 'Usuário cadastrado.','Cadastro de Usuários');
+                } else {
+                    $userdb->update($data, "idusu = $iduser");
+                    $this->view->errorMsg = "Registro alterado.";
+                    $this->_helper->Logger->gravarlog('info', 'Usuário Alterado.','Cadastro de Usuários');
+                }
+            } catch (Exception $e) {
+                $this->view->errorMsg = "Registro não incluído.<br>" . utf8_encode($e->getMessage());
+                $this->_helper->Logger->gravarlog('err', utf8_encode($e->getMessage()),'Cadastro de Usuários');
+            }
+        }
+        $this->view->userData = $userdb->getUser($iduser);
+        $this->view->iduser = $iduser;
+    }
+
+    public function excluirAction() {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->view->layout()->disableLayout();
+
+        $userdb = new UserDB();
+
+        $iduser = $this->_getParam("iduser");
+
+        if ($iduser == 0) {
+            $this->_redirect('login/logout');
+        }
+        $dbtable = "usuarios";
+        $where = "idusu=$iduser";
+        try {
+            $this->_db->delete($dbtable, $where);
+            $this->view->errorMsg = 'Registro excluído!';
+            $this->_helper->Logger->gravarlog('info', 'Usuário Alterado.','Cadastro de Usuários');
+        } catch (Exception $e) {
+            $this->view->errorMsg = 'O registro não pode ser excluído!<br>' . utf8_encode($e->getMessage());
+            $this->_helper->Logger->gravarlog('err', utf8_encode($e->getMessage()),'Cadastro de Usuários');
+        }
+        $this->_redirect("user");
+    }
+
+    public function resetarsenhaAction() {
+        $this->view->layout()->disableLayout();
+        $iduser = $this->_getParam('iduser');
+        $userdb = new UserDB();
+        $senha = $this->gerasenha();
+        $data = array('senha' => sha1($senha), 'trocarsenha' => 1);
+        $userdb->update($data, "idusu = $iduser");
+        // enviar email confirmando a nova senha
+        $corpo = "Prezado(a) Usuário(a),<br><br>Sua nova senha para acesso ao SIG é <b>" . $senha . "</b> no seu próximo login você será solicitado a alterar a senha.<br><br>
+        	Atenciosamente,<br>
+        	SDTP      	
+        	";
+        $para = $userdb->getMail($iduser);
+
+        $this->_helper->Sendmail->salvarMail($para, "", "[SDTP] Alteração de Senha de Acesso ao SDTP-SIG", $corpo, 0);
+        //$this->_helper->Sendmail->enviarMail();
+        $this->_redirect("user/caduser?idusu=$iduser");
+    }
+
+    private function gerasenha() {
+        $vogais = "aeiouAEIOU";
+        $consoantes = "bcDfghjKmnpqRstvXyzBVRSZ";
+        $numeros = "1234567890";
+        $resultado = "";
+
+        $a = strlen($vogais) - 1;
+        $b = strlen($consoantes) - 1;
+        $c = strlen($numeros) - 1;
+
+        for ($x = 0; $x <= 3; $x++) {
+            $aux1 = rand(0, $a);
+            $aux2 = rand(0, $b);
+            $aux3 = rand(0, $c);
+            $str1 = substr($consoantes, $aux1, 1);
+            $str2 = substr($vogais, $aux2, 1);
+            $str3 = substr($numeros, $aux3, 1);
+
+            $resultado .= $str1 . $str2 . $str3;
+            $resultado = trim($resultado);
+        }
+        return $resultado;
+    }
+
+}

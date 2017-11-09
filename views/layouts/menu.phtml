@@ -1,0 +1,70 @@
+<?php
+if (Zend_Auth::getInstance()->hasIdentity()) {
+    $_admin = Zend_Auth::getInstance()->getIdentity()->admin;
+    $fig = APPLICATION_DIR . "/public/images/senha.jpg";
+    $title = Zend_Auth::getInstance()->getIdentity()->nome . " (Logout) ";
+} else {
+    $_admin = 0;
+    $fig = APPLICATION_DIR . "/public/images/senha_off.jpg";
+    $title = "Login Administrador";
+}
+?>
+
+<nav class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <img style="position: absolute; top:7px;" src="<?php echo APP_IMAGES . 'logo_decea.png' ?>">
+            <img style="position: absolute; left:200px; top:7px;" src="<?php echo APP_IMAGES . 'sdpva.png' ?>" title="Sistema de Diagnóstico e Prognóstico de Vento em Aeródromo de SGBR">
+            <div id="time" style="position: absolute; right:100px; top:12px; color: white;"></div>
+            <a href="<?php echo APPLICATION_DIR; ?>/login"><img style="position: absolute; right:30px; top:12px;" src="<?php echo $fig; ?>" width="25" height="25" title="<?php echo $title; ?>"></a>
+        </div>
+        <div style="position: relative; left:340px;">
+            <ul class="nav navbar-nav">
+                <li ><a href="<?php echo APPLICATION_DIR; ?>/diagnostico">[Diagnóstico]</a></li>
+<li><a href="<?php echo APPLICATION_DIR; ?>/prognostico">[Prognóstico]</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consultas
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/alertas">Histórico de Alertas</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/dadosderivados">Dados Derivados</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/arquivosaprun">Arquivos APRun</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/emsptu">EMS PTU</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/emswind">EMS Wind</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/historico/diagxprog">Diagnóstico x Prognóstico</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo APPLICATION_DIR; ?>/services">Serviços SDPVA</a></li>
+ 
+                    </ul>
+                </li>
+                
+                    
+<?php if ($_admin) { ?>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Administração
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/parametros"> Parâmetros</a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/services/sendxml"> Envia XML [sendxmlfile] </a></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/clientesxml"> Cadastro de Clientes XML </a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/user"> Cadastro de Usuários </a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/user/trocarsenha"> Trocar Senha </a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/admin/log"> Visualização do Log </a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo APPLICATION_DIR; ?>/admin/limparbase"> Limpar Base de Dados </a></li>
+                        </ul>
+                    </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,271 @@
+<!-- 
+Visualização de gráficos de prognóstico
+prognosticoController
+-->
+<h3><b>Prognóstico | Data: <?php echo $this->datap; ?></b> - Em Teste</h3>
+
+<a href="#"><img src="<?php echo APP_IMAGES . 'black-left.png' ?>" onclick="fAnterior();"></a> &nbsp;&nbsp;
+<a href="#"><img src="<?php echo APP_IMAGES . 'black-right.png' ?>" onclick="fProxima();"></a>
+
+<div class="row">
+    <div class="col-md-6 prognostico">
+        <!-- Previsão 15 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t15_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t15_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display">
+            <thead>    
+                <tr>
+                    <th class="aba">z (ft)</th>
+                    <th class="aba">Vetor (graus)</th>
+                    <th class="aba">Vetor (kt)</th>
+                    <th class="aba">Proa (kt)</th>
+                    <th class="aba">Cauda (kt)</th>
+                    <th class="aba">Través Esq (kt)</th>
+                    <th class="aba">Través Dir (kt)</th>
+                    <!-- <th class="aba">Windshear (kt/100ft)</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->prognosticoData15 as $d) {
+                    $flag = 0;
+                    switch ($d['windshear']) {
+                        case ($d['windshear'] < $this->wind_shear_interv1_max):
+                            $tipow = ' Leve';
+                            break;
+                        case ($d['windshear'] >= $this->wind_shear_interv1_max && $d['windshear'] < $this->wind_shear_interv2_max):
+                            $tipow = ' Moderado';
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv2_max && $d['windshear'] <= $this->wind_shear_interv3_max):
+                            $tipow = ' Forte'; $flag = 1;
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv3_max):
+                            $tipow = ' Severo'; $flag = 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    ?>
+                    <tr>
+                        <td class="aba"><?php echo $d['z']; ?></td>
+                        <td class="aba"><?php echo $d['vetor_grau']; ?></td>
+                        <td class="aba"><?php echo round($d['vetor_kt'],1); ?></td>
+
+                        <?php if($d['proa'] > $this->limproa) { ?>
+                            <td class="aba alerta"><?php echo $d['proa']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['proa']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['cauda'] > $this->limcauda) { ?>
+                            <td class="aba alerta"><?php echo $d['cauda']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['cauda']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_esq'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_esq']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_esq']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_dir'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_dir']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_dir']; ?></td>
+                        <?php } ?>
+<!--
+                        <?php if($flag) { ?>
+                            <td class="aba alerta"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } ?>
+-->
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+        <br />
+        <!-- Previsão 30 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t30_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t30_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display" width='100%'>
+            <thead>    
+                <tr>
+                   <th class="aba">z (ft)</th>
+                    <th class="aba">Vetor (graus)</th>
+                    <th class="aba">Vetor (kt)</th>
+                    <th class="aba">Proa (kt)</th>
+                    <th class="aba">Cauda (kt)</th>
+                    <th class="aba">Través Esq (kt)</th>
+                    <th class="aba">Través Dir (kt)</th>
+                    <!-- <th class="aba">Windshear (kt/100ft)</th> -->
+                </tr>
+            </thead>
+            <?php
+            foreach ($this->prognosticoData30 as $d) {
+                    $flag = 0;
+                    switch ($d['windshear']) {
+                        case ($d['windshear'] < $this->wind_shear_interv1_max):
+                            $tipow = ' Leve';
+                            break;
+                        case ($d['windshear'] >= $this->wind_shear_interv1_max && $d['windshear'] < $this->wind_shear_interv2_max):
+                            $tipow = ' Moderado';
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv2_max && $d['windshear'] <= $this->wind_shear_interv3_max):
+                            $tipow = ' Forte'; $flag = 1;
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv3_max):
+                            $tipow = ' Severo'; $flag = 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    ?>
+                    <tr>
+                        <td class="aba"><?php echo $d['z']; ?></td>
+                        <td class="aba"><?php echo $d['vetor_grau']; ?></td>
+                        <td class="aba"><?php echo round($d['vetor_kt'],1); ?></td>
+
+                        <?php if($d['proa'] > $this->limproa) { ?>
+                            <td class="aba alerta"><?php echo $d['proa']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['proa']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['cauda'] > $this->limcauda) { ?>
+                            <td class="aba alerta"><?php echo $d['cauda']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['cauda']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_esq'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_esq']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_esq']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_dir'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_dir']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_dir']; ?></td>
+                        <?php } ?>
+<!--
+                        <?php if($flag) { ?>
+                            <td class="aba alerta"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } ?>
+-->
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+        <br />
+        <!-- Previsão 45 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t45_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t45_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display" width='100%'>
+            <thead>
+                <tr>
+                   <th class="aba">z (ft)</th>
+                    <th class="aba">Vetor (graus)</th>
+                    <th class="aba">Vetor (kt)</th>
+                    <th class="aba">Proa (kt)</th>
+                    <th class="aba">Cauda (kt)</th>
+                    <th class="aba">Través Esq (kt)</th>
+                    <th class="aba">Través Dir (kt)</th>
+                    <!-- <th class="aba">Windshear (kt/100ft)</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->prognosticoData45 as $d) {
+                    $flag = 0;
+                    switch ($d['windshear']) {
+                        case ($d['windshear'] < $this->wind_shear_interv1_max):
+                            $tipow = ' Leve';
+                            break;
+                        case ($d['windshear'] >= $this->wind_shear_interv1_max && $d['windshear'] < $this->wind_shear_interv2_max):
+                            $tipow = ' Moderado';
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv2_max && $d['windshear'] <= $this->wind_shear_interv3_max):
+                            $tipow = ' Forte'; $flag = 1;
+                            break;
+                        case ($d['windshear'] > $this->wind_shear_interv3_max):
+                            $tipow = ' Severo'; $flag = 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    ?>
+                    <tr>
+                        <td class="aba"><?php echo $d['z']; ?></td>
+                        <td class="aba"><?php echo $d['vetor_grau']; ?></td>
+                        <td class="aba"><?php echo round($d['vetor_kt'],1); ?></td>
+
+                        <?php if($d['proa'] > $this->limproa) { ?>
+                            <td class="aba alerta"><?php echo $d['proa']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['proa']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['cauda'] > $this->limcauda) { ?>
+                            <td class="aba alerta"><?php echo $d['cauda']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['cauda']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_esq'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_esq']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_esq']; ?></td>
+                        <?php } ?>
+
+                        <?php if($d['traves_dir'] > $this->limtraves) { ?>
+                            <td class="aba alerta"><?php echo $d['traves_dir']; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['traves_dir']; ?></td>
+                        <?php } ?>
+<!--
+                        <?php if($flag) { ?>
+                            <td class="aba alerta"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } else { ?>
+                            <td class="aba"><?php echo $d['windshear'].$tipow; ?></td>
+                        <?php } ?>
+-->
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+        <br />
+        ---------------------<br />
+        <p>(1) Sugestão de pista baseada em 330ft.</p>
+        <p>(2) Manter pista em operação. Valores com referência a pista 09.</p>
+
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <br>
+        <!-- Exibe Gráfico -->
+        <center><img src="<?php echo APP_IMAGES . $this->pistagr; ?>" width="15%" height="15%"></center>
+        <center>
+            <a href="#" onclick="fExibeGrafico();">
+                <img src="<?php echo APP_GRAPH . "/SBGR/" . $this->grafico; ?>?12345678890.1234" width="92%" >
+            </a>
+            <img src="<?php echo APP_IMAGES . 'paleta.png' ?>"  width="7%" height="1%">
+        </center>
+    </div>
+</div>
+<script type="text/javascript">
+    function fExibeGrafico() {
+        var grafico = "<?php echo $this->grafico; ?>";
+        var txt = '<?php echo APP_HOST . APP_GRAPH; ?>' + grafico + '?no-cache="' + Number(new Date()) + '"';
+        window.open(txt, "SDPVA - Prognóstico", "directories=no,status=0,toolbar=0,width=600,height=500,location=no,menubar=no");
+    }
+    function fAnterior() {
+        var url = "/SDPVA/prognostico?dth=<?php echo $this->ant; ?>";
+        location = url;
+    }
+    function fProxima() {
+        var url = "/SDPVA/prognostico?dth=<?php echo $this->prox; ?>";
+        location = url;
+    }
+</script>

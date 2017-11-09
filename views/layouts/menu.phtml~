@@ -1,0 +1,72 @@
+<?php
+if (Zend_Auth::getInstance()->hasIdentity()) {
+    $_admin = Zend_Auth::getInstance()->getIdentity()->admin;
+} else {
+    $_admin = 0;
+}
+?>
+<div>
+    <nav role="navigation" class="navbar navbar-default navbar-fixed-top navbar-custom">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" data-target="#navbarCollapse" datatoggle="collapse" class="navbar-toggle">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div id="navbarCollapse" class="navbar-collapse collapse">
+                <ul class="nav nav-pills">
+                    <li><a href="#"><img src="<?php echo APP_IMAGES . 'logo_decea.png' ?>"></a></li>
+                    <li><a href="#"><img src="<?php echo APP_IMAGES . 'sdpva.png' ?>" title="Sistema de Diagnóstico e Prognóstico de Vento em Aeródromo"></a></li>
+                    <li><a href="<?php echo APPLICATION_DIR; ?>/diagnostico"><img src="<?php echo APPLICATION_DIR; ?>/public/images/home.jpg" width="25" height="25" title="Página Principal"></a></li>
+                    <?php
+                    if (Zend_Auth::getInstance()->hasIdentity()) {
+                        $fig = APPLICATION_DIR . "/public/images/senha.jpg";
+                        $title = "Logout";
+                    } else {
+                        $fig = APPLICATION_DIR . "/public/images/senha_off.jpg";
+                        $title = "Login Administrador";
+                    }
+                    ?>
+
+                    <li><a href="<?php echo APPLICATION_DIR; ?>/login"><img src="<?php echo $fig; ?>" width="25" height="25" title="<?php echo $title; ?>"></a></li>
+
+                    <!-- Prognóstico -->
+
+                    <li><a href="<?php echo APPLICATION_DIR; ?>/prognostico">Prognóstico</a></li>
+
+                    <!-- Diagnóstico -->
+
+                    <li><a href="<?php echo APPLICATION_DIR; ?>/diagnostico">Diagnóstico</a></li>
+
+                    <!-- Administração -->
+                    <?php if ($_admin) { ?>
+
+                        <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" class="dropdowntoggle"> Administração <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://localhost/SDPVA/admin/parametros"> Parâmetros</a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/admin/getxmlfile"> Consulta XML [getxmlfile] </a></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/admin/sendxmlfile"> Envia XML [sendxmlfile] </a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/clientesxml"> Cadastro de Clientes XML </a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/user"> Cadastro de Usuários </a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/user/trocarsenha"> Trocar Senha </a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/admin/log"> Visualização do Log </a></li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo APPLICATION_DIR; ?>/processa/calcalerta"> Processa Alertas </a></li>
+                            </ul>
+                        </li>
+                    <?php }
+                    ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

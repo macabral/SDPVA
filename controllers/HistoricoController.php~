@@ -1,0 +1,119 @@
+<?php
+
+require 'alertasdb.php';
+require 'dadosderivadosdb.php';
+
+class HistoricoController extends Zend_Controller_Action {
+
+    protected $_db;
+    protected $_admin;
+
+    public function preDispatch() {
+        
+    }
+
+    public function init() {
+        /* Initialize action controller here */
+        $this->_db = Zend_Db_Table::getDefaultAdapter();
+    }
+
+    public function indexAction() {
+        $this->_redirect("historico/alertas");
+    }
+
+    public function alertasAction() {
+
+        $this->_helper->Logger->gravarlog('info', 'Consulta Histórico de Alertas.', 'Historico');
+        $dt = new Zend_Date();
+        $dt1 = $dt->toString("YYYY-MM-dd");
+        $dt2 = $dt->toString("YYYY-MM-dd");
+        $pista = "TODAS";
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $valdate = new Zend_Validate_Date();
+
+            $dt1 = htmlspecialchars($request->getPost('dt1'));
+            $dt2 = htmlspecialchars($request->getPost('dt2'));
+
+            if (!$this->_helper->Myhelper->valData($dt1)) {
+                $dt1 = new Zend_Date($dt,'YYYY-MM-dd');
+            } else {
+                $dt1 = new Zend_Date($dt1);
+                if (!$valdate->isValid($dt1)) {
+                    $dt1 = new Zend_Date($dt,'YYYY-MM-dd');
+                }
+            }
+            if (!$this->_helper->Myhelper->valData($dt2)) {
+                $dt2 = new Zend_Date($dt);
+            } else {
+                $dt2 = new Zend_Date($dt2);
+                if (!$valdate->isValid($dt2)) {
+                    $dt2 = new Zend_Date($dt);
+                }
+            }
+            $pista = $request->getPost('pista');
+            if ($pista <> "09" && $pista <> "27" && $pista <> "TODAS") {
+                $pista = "TODAS";
+            }
+
+            $dt1 = $dt1->get('YYYY-MM-dd');
+            $dt2 = $dt2->get('YYYY-MM-dd');
+        }
+        // motar filtro
+        $filtro = "datahora between '$dt1 00:00:00' and '$dt2 23:59:59'";
+        if ($pista <> "TODAS") {
+            $filtro .= " and pista='" . $pista . "'";
+        }
+        $log = new alertasdb();
+        $this->view->data = $log->getALL($filtro);
+        $data = new Zend_Date(strtotime($dt1));
+        $this->view->dt1 = $data->toString("dd/MM/yyyy");
+        $data = new Zend_Date(strtotime($dt2));
+        $this->view->dt2 = $data->toString("dd/MM/yyyy");
+    }
+
+    public function dadosderivadosAction() {
+
+        $this->_helper->Logger->gravarlog('info', 'Consulta Histórico de Dados Derivados.', 'Historico');
+        $dt = new Zend_Date();
+        $dt1 = $dt->toString("YYYY-MM-dd");
+        $dt2 = $dt->toString("YYYY-MM-dd");
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $valdate = new Zend_Validate_Date();
+
+            $dt1 = htmlspecialchars($request->getPost('dt1'));
+            $dt2 = htmlspecialchars($request->getPost('dt2'));
+
+            if (!$this->_helper->Myhelper->valData($dt1)) {
+                $dt1 = new Zend_Date($dt,'YYYY-MM-dd');
+            } else {
+                $dt1 = new Zend_Date($dt1);
+                if (!$valdate->isValid($dt1)) {
+                    $dt1 = new Zend_Date($dt,'YYYY-MM-dd');
+                }
+            }
+            if (!$this->_helper->Myhelper->valData($dt2)) {
+                $dt2 = new Zend_Date($dt);
+            } else {
+                $dt2 = new Zend_Date($dt2);
+                if (!$valdate->isValid($dt2)) {
+                    $dt2 = new Zend_Date($dt);
+                }
+            }
+            $dt1 = $dt1->get('YYYY-MM-dd');
+            $dt2 = $dt2->get('YYYY-MM-dd');
+        }
+        // motar filtro
+        $filtro = "sodar_atual_data between '$dt1 00:00:00' and '$dt2 23:59:59'";
+        $log = new dadosderivadosdb();
+        $this->view->data = $log->getALL($filtro);
+        $data = new Zend_Date(strtotime($dt1));
+        $this->view->dt1 = $data->toString("dd/MM/yyyy");
+        $data = new Zend_Date(strtotime($dt2));
+        $this->view->dt2 = $data->toString("dd/MM/yyyy");
+    }
+
+}

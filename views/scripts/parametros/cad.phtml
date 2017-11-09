@@ -1,0 +1,164 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Paramêtros</strong></h1></div>
+    <div class="panel panel-body">
+        <button type="button" class="btn btn-info" onclick="javascript:fVoltar();"> Voltar </button>
+        <?php echo $this->erroMsg; ?>
+        <hr>
+        <?php
+        if (!empty($this->errorMsg)) {
+            echo $this->errorMsg . "<br><br>";
+        }
+        ?>
+        <form class="form-horizontal" role="form" action="<?php echo APPLICATION_DIR; ?>/parametros/cad" method="post">
+            <h4>Variação do Vento</h4><hr>
+            <!-- variação de proa -->
+            <div class="form-group" form-group-lg>
+                <label for="variaçãoproa" class="col-sm-4 controllabel text-right">Variação de Proa (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_var_proa" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_var_proa']; ?>">
+                </div>
+            </div>
+            <!-- variação de cauda -->
+            <div class="form-group" form-group-lg>
+                <label for="variaçãocauda" class="col-sm-4 controllabel text-right">Variação de Cauda (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_var_cauda" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_var_cauda']; ?>">
+                </div>
+            </div>
+            <!-- variação de traves -->
+            <div class="form-group" form-group-lg>
+                <label for="variaçãotraves" class="col-sm-4 controllabel text-right">Variação de Través (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_var_traves" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_var_traves']; ?>">
+                </div>
+            </div>
+            <h4>Intensidade do Vento</h4><hr>
+            <!-- intensidade de proa -->
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_alerta1_min" class="col-sm-4 controllabel text-right">Alerta de Intensidade de Proa (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_int_alerta1_min" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_int_alerta1_min']; ?>">
+                </div>
+            </div>
+            <!-- intensidade de cauda -->
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_alerta1_max" class="col-sm-4 controllabel text-right">Alerta de Intensidade de Cauda (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_int_alerta1_max" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_int_alerta1_max']; ?>">
+                </div>
+            </div>
+            <!-- intensidade de través-->
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_alerta2_max" class="col-sm-4 controllabel text-right">Alerta de Intensidade de Través (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_int_alerta2_max" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_int_alerta2_max']; ?>">
+                </div>
+            </div>
+            <!-- intensidade limite para seleção de pista-->
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_limite_pista" class="col-sm-4 controllabel text-right">Velocidade Limite para Seleção de Pista (kt)</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_int_limite_pista" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_int_limite_pista']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_limite_330" class="col-sm-4 controllabel text-right">Velocidade Limite para Seleção de Pista (kt) no nível 330</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="wind_int_limite_330" placeholder="Valor em kt" maxlength="2" required value="<?php echo $this->parametrosData['wind_int_limite_330']; ?>">
+                </div>
+            </div>
+            <h4>Altitudes Críticas</h4><hr>
+            <!-- Nome altitude Crítica (1-4) -->
+            <label for="1" class="col-sm-4 controllabel text-right"></label>
+            <label for="2" class="col-sm-4 controllabel text-left">Nome</label>
+            <label for="3" class="col-sm-4 controllabel text-left">Valor (ft)</label>
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_nome_alt_critica_1" class="col-sm-4 controllabel text-right">[1]</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_nome_alt_critica_1" placeholder="" maxlength="7" required value="<?php echo $this->parametrosData['wind_int_nome_alt_critica_1']; ?>">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_valor_alt_critica_1" placeholder="Valor em kt" maxlength="3" required value="<?php echo $this->parametrosData['wind_int_valor_alt_critica_1']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_nome_alt_critica_2" class="col-sm-4 controllabel text-right">[2]</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_nome_alt_critica_2" placeholder="" maxlength="7" required value="<?php echo $this->parametrosData['wind_int_nome_alt_critica_2']; ?>">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_valor_alt_critica_2" placeholder="Valor em ft" maxlength="3" required value="<?php echo $this->parametrosData['wind_int_valor_alt_critica_2']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_nome_alt_critica_3" class="col-sm-4 controllabel text-right">[3]</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_nome_alt_critica_3" placeholder="" maxlength="7" required value="<?php echo $this->parametrosData['wind_int_nome_alt_critica_3']; ?>">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_valor_alt_critica_3" placeholder="Valor em ft" maxlength="3" required value="<?php echo $this->parametrosData['wind_int_valor_alt_critica_3']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_int_nome_alt_critica_4" class="col-sm-4 controllabel text-right">[4]</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_nome_alt_critica_4" placeholder="" maxlength="7" required value="<?php echo $this->parametrosData['wind_int_nome_alt_critica_4']; ?>">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_int_valor_alt_critica_4" placeholder="Valor em ft" maxlength="3" required value="<?php echo $this->parametrosData['wind_int_valor_alt_critica_4']; ?>">
+                </div>
+            </div>
+            <h4>Windshear</h4><hr>
+            <div class="form-group" form-group-lg>
+                <label for="wind_shear_interv1_max" class="col-sm-4 controllabel text-right">Valor de alerta leve (>0 e <4 kt por 100ft)</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_shear_interv1_max" title=">0 e <4 kt por 100ft" maxlength="1" required value="<?php echo $this->parametrosData['wind_shear_interv1_max']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_shear_interv2_max" class="col-sm-4 controllabel text-right">Valor de alerta moderado (>=4 e <8 kt por 100ft)</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_shear_interv2_max" title=">=4 e <8 kt por 100ft" maxlength="1" required value="<?php echo $this->parametrosData['wind_shear_interv2_max']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_shear_interv3_max" class="col-sm-4 controllabel text-right">Valor de alerta forte (>=8 e <=12 kt por 100ft)</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_shear_interv3_max" title=">=8 e =12 kt por 100ft" maxlength="2" required value="<?php echo $this->parametrosData['wind_shear_interv3_max']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="wind_shear_interv4_max" class="col-sm-4 controllabel text-right">Valor de alerta severo (Acima de 12 kt por 100ft)</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="wind_shear_interv4_max" title="Acima de 12 kt por 100ft" maxlength="2" required value="<?php echo $this->parametrosData['wind_shear_interv4_max']; ?>">
+                </div>
+            </div>
+            <h4>Configuração da Pista</h4><hr>
+            <div class="form-group" form-group-lg>
+                <label for="dir_pista" class="col-sm-4 controllabel text-right">Direção da Pista</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="dir_pista"  maxlength="3" required value="<?php echo $this->parametrosData['dir_pista']; ?>">
+                </div>
+            </div>
+            <div class="form-group" form-group-lg>
+                <label for="d_mag" class="col-sm-4 controllabel text-right">Declinação Magnética</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="d_mag"  maxlength="3" required value="<?php echo $this->parametrosData['d_mag']; ?>">
+                </div>
+            </div>
+            <!-- Salvar -->
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-4">
+                    <button type="submit" class="btn btn-primary"> Salvar </button>
+                    <input type="hidden" name="<?php echo $this->fieldName; ?>" value="<?php echo $this->token; ?>">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br><br>
+<script type="text/javascript">
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+</script>

@@ -1,0 +1,101 @@
+<!-- 
+Visualização de gráficos de diagnóstico
+diagnoticoController
+-->
+<div class="row">
+    <div class="col-md-2">
+        <form name="myform" method="post" action="<?php echo APPLICATION_DIR; ?>/diagnostico">
+            <h3>Diagnóstico</h3><br>
+            <h4>Tipo de Gráfico</h4>
+            <input type="radio" value="barbela" name="tipografico[]" onclick="fSubmit();" <?php echo $this->sel_barbela; ?>> Barbela<br>
+            <input type="radio" value="seta" name="tipografico[]" onclick="fSubmit();" <?php echo $this->sel_seta; ?>> Seta<br><br>
+            <h4>Seleção de Pista</h4>
+            <input type="radio" value="9" name="pista[]" onclick="fSubmit();" <?php echo $this->sel_pista1; ?>> Pista 09<br>
+            <input type="radio" value="27" name="pista[]" onclick="fSubmit();" <?php echo $this->sel_pista2; ?>> Pista 27<br><br>
+            <h4>Seleção de Horário</h4>
+            <input type="radio" value="3" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr3; ?>> 3 Horas<br>
+            <input type="radio" value="6" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr6; ?>> 6 Horas<br>
+            <input type="radio" value="12" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr12; ?>> 12 Horas<br>
+            <input type="radio" value="24" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr24; ?>> 24 Horas<br>
+            <br><br><br><br><br><br><br><br><br><br>
+        </form>
+    </div>
+    <div class="col-md-8">
+        <center><img src="<?php echo APP_IMAGES . $this->pistagr; ?>" width="10%" height="10%"></center>
+        <center><img src="<?php echo APP_GRAPH . $this->grafico; ?>?123456789.123" width="90%" >
+            <img src="<?php echo APP_IMAGES . 'paleta.jpg' ?>" height="20%"></center>
+    </div>
+    <div class="col-md-2" style="text-align: center; background-color: #E0FF84;">
+        <h3>Alertas</h3>
+        <h5><?php echo $this->local . " - " . $this->pista; ?></h5>
+        <?php echo $this->dataProcesso; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(1);">Velocidade de Cauda</a></h6>
+        <?php echo $this->VelocidadeCauda; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(2);">Velocidade de Proa</a></h6>
+        <?php echo $this->VelocidadeProa; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(3);">Velocidade de Través Esquerdo</a></h6>
+        <?php echo $this->VelocidadeTravesEsquerdo; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(4);">Velocidade de Través Direito</a></h6>
+        <?php echo $this->VelocidadeTravesDireito; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(5);">Variação de Cauda</a></h6>
+        <?php echo $this->VariacaoCauda; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(6);">Variação de Proa</a></h6>
+        <?php echo $this->VariacaoProa; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(7);">Variação de Través Direito</a></h6>
+        <?php echo $this->VariacaoTravesDir; ?>
+
+        <h6><a href="#"  onclick="fExibeGrafico(8);">Variação de Través Esquerdo</a></h6>
+        <?php echo $this->VariacaoTravesEsq; ?>
+
+        <h6><a href="#" onclick="fExibeGrafico(9);">Windshear</a></h6>
+        <?php echo $this->Windshear; ?>
+        <br><br>
+
+    </div>
+</div>
+<script type="text/javascript">
+    function fSubmit() {
+        myform.submit();
+    }
+    function fExibeGrafico(grafico) {
+        switch (grafico) {
+            case 1:
+                var gname = "vel_cauda.png";
+                break;
+            case 2:
+                var gname = "vel_proa.png";
+                break;
+            case 3:
+                var gname = "var_traves_esq.png";
+                break;
+            case 4:
+                var gname = "var_traves_dir.png";
+                break;   
+            case 5:
+                var gname = "var_cauda.png";
+                break;  
+            case 6:
+                var gname = "var_proa.png";
+                break; 
+            case 7:
+                var gname = "vel_traves_dir.png";
+                break;  
+            case 8:
+                var gname = "vel_traves_esq.png";
+                break;   
+            case 9:
+                var gname = "windshear6x1.png";
+                break;                  
+        }
+        var txt = '<?php echo APP_HOST . APP_GRAPH; ?>' + gname + '?no-cache="' + Number(new Date()) + '"';
+        window.open(txt, "SDPVA", "directories=no,status=0,toolbar=0,width=600,height=500,location=no,menubar=no");
+    }
+</script>
+

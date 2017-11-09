@@ -1,0 +1,129 @@
+<!--
+// visualização dos EMS PTU
+// HistoricoController
+-->
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>EMS PTU</strong></h1></div>
+    <div class="panel panel-body">
+        <h5>
+            <button type="button" class="btn btn-info" onclick="fVoltar();"> Voltar </button>
+        </h5>
+        <div>
+            <form name="myform" method="post" action="<?php echo APPLICATION_DIR; ?>/historico/emsptu">
+                <table class="tableForm" style="width:100%;">
+                    <tr>
+                        <td class="td1Form" style="width:140px;text-align:right;">
+                            <label for="dt1">Período&nbsp;</label>
+                            <input  type="text" name="dt1" id="dt1" class="tcal" style="width: 100px;" value="<?php echo $this->dt1 ?>"/>
+                            <input type="button" id="btnSalvar" onclick="fsalvar();" value="Filtrar">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <?php if (!empty($this->data)) { ?>
+                <table id="mytab" class="display" width='100%'>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>pressão</th>
+                            <th>pressão</th>
+                            <th>temp ar</th>
+                            <th>umidade</th>
+                            <th>temp orv</th>
+                            <th>temp ar</th>
+                            <th>umidade</th>
+                            <th>T. pista</th>
+                        </tr>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>runway</th>
+                            <th>pa_qnh</th>
+                            <th>pa_qfe</th>
+                            <th>th_tt</th>
+                            <th>th_uu</th>
+                            <th>th_td</th>
+                            <th>th_tt_2</th>
+                            <th>th_uu_2</th>
+                            <th>ground_t</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($this->data as $d) {
+                            $date = new Zend_Date($d['timestamp']);
+                            $mydata = $date->toString("dd/MM/yyyy HH:mm");
+                            ?>
+                            <tr>
+                                <td><?php echo $this->escape($mydata) ?></td>
+                                <td><?php echo $this->escape($d['runway']) ?></td>
+                                <td><?php echo $this->escape($d['pa_qnh']) ?></td>
+                                <td><?php echo $this->escape($d['pa_qfe']) ?></td>
+                                <td><?php echo $this->escape($d['th_tt']) ?></td>
+                                <td><?php echo $this->escape($d['th_uu']) ?></td>
+                                <td><?php echo $this->escape($d['th_td']) ?></td>
+                                <td><?php echo $this->escape($d['th_tt_2']) ?></td>
+                                <td><?php echo $this->escape($d['th_uu_2']) ?></td>
+                                <td><?php echo $this->escape($d['ground_t']) ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                    </tbody>
+                </table>
+            <p>Limite de 2000 registros exibidos.</p>
+                <?php
+            } else {
+                echo "Não foram encontrados registros.";
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#mytab').DataTable(
+                {
+                    "order": [[0, "desc"]],
+                    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Todas"]],
+                    language: {
+                        "sEmptyTable": "Nenhum registro encontrado",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "_MENU_ resultados por página",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "sSearch": "Pesquisar ",
+                        "oPaginate": {
+                            "sNext": " Próximo",
+                            "sPrevious": "Anterior ",
+                            "sFirst": "Primeiro",
+                            "sLast": "Último"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Ordenar colunas de forma ascendente",
+                            "sSortDescending": ": Ordenar colunas de forma descendente"
+                        }
+                    }
+                }
+        );
+    });
+
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+    function fsalvar() {
+        if (!isDate(document.getElementById('dt1').value)) {
+            alert("Por favor, preencha o valor correto no campo [Data de Início].");
+            document.forms["myform"].dt1.focus();
+            return;
+        }
+
+        document.forms["myform"].submit();
+    }
+
+</script>

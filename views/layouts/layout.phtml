@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <meta http-equiv='cash-control' content='no-cache' />
+
+        <link rel='shortcut icon' type='image/x-icon' href='images/favicon.ico'>
+
+        <title>SDPVA-SBGR</title>
+
+        <!-- css -->
+        <link href='<?php echo APPLICATION_DIR; ?>/public/css/bootstrap.min.css' media='screen' rel='stylesheet' type='text/css'>
+        <link href='<?php echo APPLICATION_DIR; ?>/public/css/estilo.css' media='screen' rel='stylesheet' type='text/css' />
+        <link rel='stylesheet' type='text/css' href='<?php echo APPLICATION_DIR; ?>/public/css/demo_table.css'  />
+
+        <!-- js -->
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/jquery-1.11.3.min.js'></script>
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/bootstrap.min.js'></script>
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/myfunctions.js'></script>
+        <SCRIPT type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/jquery.dataTables.min.js' ></SCRIPT>
+        <script type='text/javascript' src="<?php echo APPLICATION_DIR; ?>/public/js/Chart.js"></script>
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/bootbox.min.js'></script>
+
+        <script type="text/javascript">
+            function updateClock()
+            {
+                var urlname = window.location.pathname;
+                if (urlname == "/SDPVA/diagnostico" || urlname == "/SDPVA/prognostico") {
+                    var st = srvTime();
+                    var currentTime = new Date(st);
+                    var currentHour = currentTime.getHours();
+                    var currentMinutes = currentTime.getMinutes( );
+                    var currentSeconds = currentTime.getSeconds ( );
+                    currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+                    if (currentMinutes == "02" || currentMinutes == "17" || currentMinutes == "32" || currentMinutes == "47") {
+                        if (currentSeconds==1 || currentSeconds==2) {
+                            location.reload();
+                        }
+                    }
+                    document.getElementById("time").innerHTML =  "UTC " + currentHour + ":" + currentMinutes ;
+                }
+
+
+            }
+        </script>
+    </head>
+    <body onload="updateClock(); setInterval('updateClock()', 2000)">
+        <header>
+            <?php echo $this->render('menu.phtml') ?>
+        </header>
+        <div id='conteudo' class='conteudo'>
+            <?php echo $this->layout()->content; ?>
+        </div>
+        </br></br>
+    </body>
+</html>

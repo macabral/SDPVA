@@ -1,0 +1,14 @@
+#host
+localhost
+#user
+root
+#password
+brim18
+#database
+sdpva
+#diretorio_graficos
+/var/www/html/SDPVA/public/graficos/SBGR
+#diretorio_xml
+/var/www/html/SDPVA/public/xml/SBGR/diagnostico/
+
+

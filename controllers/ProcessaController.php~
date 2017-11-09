@@ -1,0 +1,224 @@
+<?php
+
+require 'parametrosdb.php';
+require 'processodb.php';
+require 'dadosderivadosdb.php';
+
+class ProcessaController extends Zend_Controller_Action {
+
+    public function calcalertaAction() {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->view->layout()->disableLayout();
+      
+        //le data do último processamento
+        $processodb = new processodb();
+        $processoData = $processodb->getProcessamento();
+        $dthr = $processoData['datahora'];
+        
+        // variáveis
+        $AlertaVelCauda = 0;
+        $AlertaVelProa = 0;
+        $AlertaVelTE = 0;
+        $AlertaVelTD = 0;
+        $AlertaVC = 0;
+        $AlertaVVP = 0;
+        $AlertaVTE = 0;
+        $AlertaVTD = 0;
+        $AlertaW =0;
+        $pista='09';
+        $xml = "<?xml version='1.0' encoding='UTF-8'?><sdpva local='SBGR' pista='".$pista."' datahora='".$dthr."' tipo='A' >";
+        $xml .= "<alertas>";
+
+// le parametros
+        $paramdb = new parametrosdb();
+        $paramData = $paramdb->getParametros();
+
+// le dados_derivados
+        $dadosderivadosdb = new dadosderivadosdb();
+
+// parametros
+        $wind_var_cauda = $paramData['wind_var_cauda'];
+        $wind_var_proa = $paramData['wind_var_proa'];
+        $wind_var_traves = $paramData['wind_var_traves'];
+        $wind_int_proa = $paramData['wind_int_alerta1_min'];
+        $wind_int_cauda = $paramData['wind_int_alerta1_max'];
+        $wind_int_traves = $paramData['wind_int_alerta2_max'];
+        $wind_shear_interv1_max = $paramData['wind_shear_interv1_max'];
+        $wind_shear_interv2_max = $paramData['wind_shear_interv2_max'];
+        $wind_shear_interv3_max = $paramData['wind_shear_interv3_max'];
+        $wind_shear_interv4_max = $paramData['wind_shear_interv4_max'];
+
+// Velocidade de Cauda
+        $dadosderivadosData = $dadosderivadosdb->getVelocidadeCauda($dthr);
+        if ($dadosderivadosData['cauda'] >= $wind_int_cauda) {
+            $VelocidadeCauda = (string) number_format($dadosderivadosData["cauda"], 0) . " kt em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', ' ')) . " ft";
+            $AlertaVelCauda = 1;
+        } else {
+            $VelocidadeCauda = abs(number_format($dadosderivadosData["cauda"], 0)) . " kt ";
+            if (number_format($dadosderivadosData["cauda"], 0) != 0) {
+                $VelocidadeCauda .= (string) "em " . $this->_helper->Myhelper->arredonda(number_format($linha5["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<velcauda><valor>".$VelocidadeCauda."</valor><alerta>".$AlertaVelCauda."</alerta></velcauda>";
+
+// Velocidade de Proa
+        $dadosderivadosData = $dadosderivadosdb->getVelocidadeProa($dthr);
+        if ($dadosderivadosData['proa'] >= $wind_int_proa) {
+            $VelocidadeProa = number_format($dadosderivadosData["proa"], 0) . " kt em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVelProa = 1;
+        } else {
+            $VelocidadeProa = abs(number_format($dadosderivadosData["proa"], 0)) . " kt";
+            if (number_format($dadosderivadosData["proa"], 0) != 0) {
+                $VelocidadeProa .= " em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<velproa><valor>".$VelocidadeProa."</valor><alerta>".$AlertaVelProa."</alerta></velproa>";
+        
+// Velocidade Través Esquerdo
+        $dadosderivadosData = $dadosderivadosdb->getTravesEsquerdo($dthr);
+        if ($dadosderivadosData["traves_esq"] >= $wind_int_traves) {
+            $VelocidadeTravesEsquerdo = abs(number_format($dadosderivadosData["traves_esq"], 0)) . " kt em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVelTE = 1;
+        } else {
+            $VelocidadeTravesEsquerdo = abs(number_format($dadosderivadosData["traves_esq"], 0)) . " kt";
+            if (number_format($dadosderivadosData["traves_esq"], 0) != 0) {
+                $VelocidadeTravesEsquerdo .= " em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<velte><valor>".$VelocidadeTraesEsquerdo."</valor><alerta>".$AlertaVelTE."</alerta></velte>";
+        
+// Velocidade Través Direito
+        $dadosderivadosData = $dadosderivadosdb->getTravesDireito($dthr);
+        if ($dadosderivadosData["traves_dir"] >= $wind_int_traves) {
+            $VelocidadeTravesDireito = abs(number_format($dadosderivadosData["traves_dir"], 0)) . " kt em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVelTD = 1;
+        } else {
+            $VelocidadeTravesDireito = abs(number_format($dadosderivadosData["traves_dir"], 0)) . "kt";
+            if (number_format($dadosderivadosData["traves_dir"], 0) != 0) {
+                $VelocidadeTravesDireito .= " em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<veltd><valor>".$VelocidadeTravesDireito."</valor><alerta>".$AlertaVelTD."</alerta></veltd>";
+
+// Variação de Cauda
+        $dadosderivadosData = $dadosderivadosdb->getVariacaoCauda($dthr);
+        $VariacaoCauda = "";
+        if ($dadosderivadosData["var_cauda"] >= $wind_var_cauda) {
+            $VariacaoCauda .= number_format($dadosderivadosData["var_cauda"], 0) . " kt ";
+            $VariacaoCauda .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVC = 1;
+        } else {
+            $VariacaoCauda .= number_format($dadosderivadosData["var_cauda"], 0) . " kt ";
+            if (number_format($dadosderivadosData["var_cauda"], 0) != 0) {
+                $VariacaoCauda .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<varcauda><valor>".$VariacaoCauda."</valor><alerta>".$AlertaVC."</alerta></varcauda>";
+
+// Variação de Proa
+        $dadosderivadosData = $dadosderivadosdb->getVariacaoProa($dthr);
+        $VariacaoProa = "";
+        if ($dadosderivadosData["var_proa"] >= $wind_var_proa) {
+            $VariacaoProa .= number_format($dadosderivadosData["var_proa"], 0) . " kt ";
+            $VariacaoProa .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVP = 0;
+        } else {
+            $VariacaoProa .= number_format($dadosderivadosData["var_proa"], 0) . " kt ";
+            if (number_format($dadosderivadosData["var_proa"], 0) != 0) {
+                $VariacaoProa .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<varproa><valor>".$VariacaoProa."</valor><alerta>".$AlertaVP."</alerta></varproa>";
+
+// Variação Través Direito
+        $dadosderivadosData = $dadosderivadosdb->getVariacaoTravesDir($dthr);
+        $VariacaoTravesDir = "";
+        if ($dadosderivadosData["var_traves_dir"] >= $wind_var_proa) {
+            $VariacaoTravesDir .= number_format($dadosderivadosData["var_traves_dir"], 0) . " kt ";
+            $VariacaoTravesDir .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            $AlertaVTD = 1;
+            
+        } else {
+            $VariacaoTravesDir .= number_format($dadosderivadosData["var_traves_dir"], 0) . " kt ";
+            if (number_format($dadosderivadosData["var_traves_dir"], 0) != 0) {
+                $VariacaoTravesDir .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<vartd><valor>".$VariacaoTravesDir."</valor><alerta>".$AlertaVTD."</alerta></vartd>";
+        
+// Variação Través Esquerdo
+        $dadosderivadosData = $dadosderivadosdb->getVariacaoTravesEsq($dthr);
+        $VariacaoTravesEsq = "";
+        if ($dadosderivadosData["var_traves_esq"] >= $wind_var_proa) {
+            $VariacaoTravesEsq .= number_format($dadosderivadosData["var_traves_esq"], 0) . " kt ";
+            $VariacaoTravesEsq .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+        $AlertaVTE = 1;
+            
+        } else {
+            $VariacaoTravesEsq .= number_format($dadosderivadosData["var_traves_esq"], 0) . " kt ";
+            if (number_format($dadosderivadosData["var_traves_esq"], 0) != 0) {
+                $VariacaoTravesEsq .= "em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+            }
+        }
+        $xml .= "<varte><valor>".$VariacaoTravesEsq."</valor><alerta>".$AlertaVTE."</alerta></varte>";
+
+// Windshear
+        $dadosderivadosData = $dadosderivadosdb->getWindshear($dthr);
+        if ($dadosderivadosData['windshear'] < $wind_shear_interv1_max) {
+            $tipow = "Leve";
+        } else if ($dadosderivadosData['windshear'] >= $wind_shear_interv1_max and $dadosderivadosData['windshear'] < $wind_shear_interv2_max) {
+            $tipow = "Moderado";
+        } else if ($dadosderivadosData['windshear'] > $wind_shear_interv2_max and $dadosderivadosData['windshear'] <= $wind_shear_interv3_max) {
+            $tipow = "Forte";
+            $AlertaW = 1;
+        } else if ($dadosderivadosData['windshear'] > $wind_shear_interv3_max) {
+            $tipow = "Severo";
+            $AlertaW = 1;
+        }
+        $txt = abs(number_format($dadosderivadosData["windshear"], 2)) . " kt/100ft em " . $this->_helper->Myhelper->arredonda(number_format($dadosderivadosData["altura"] / 0.3048, 0, '.', '')) . " ft";
+        $Windshear = $tipow . "<br>" . $txt;
+        $xml .= "<windshear><valor>".$tipow . " - ". $txt ."</valor><alerta>".$AlertaW."</alerta></windshear>";
+        $xml .= "</alertas></sdpva>";
+        try {
+            // grava dados processados na tabela processamento
+            $data = [
+                'pista' => '09',
+                'velocidadecauda' => $VelocidadeCauda,
+                'velocidadeproa' => $VelocidadeProa,
+                'velocidadetravesesquerdo' => $VelocidadeTravesEsquerdo,
+                'velocidadetravesdireito' => $VelocidadeTravesDireito,
+                'variacaocauda' => $VariacaoCauda,
+                'variacaoproa' => $VariacaoProa,
+                'variacaotravesesq' => $VariacaoTravesEsq,
+                'variacaotravesdir' => $VariacaoTravesDir,
+                'windshear' => $Windshear,
+                'alertavelcauda' => $AlertaVelCauda,
+                'alertavelproa' => $AlertaVelProa,
+                'alertavelte' => $AlertaVelTE,
+                'alertaveltd' => $AlertaVelTD,
+                'alertavc' => $AlertaVC,
+                'alertavp' => $AlertaVP,
+                'alertavtd' => $AlertaVTD,
+                'alertavte' => $AlertaVTE,
+                'alertaw' => $AlertaW,
+            ];
+            
+            $processodb->update($data, "id = 1");
+            $this->_helper->Logger->gravarlog('info', "Alertas processados.", 'Processamento');
+            
+            // grava arquivo xml
+            $data = new Zend_Date($dthr);
+            $filename = $data->toString("yyyyMMddHHmm").".xml";
+            $arq = APP_XML . "alertas/" . $pista. "/".$filename;            
+            $file = fopen($arq, "w");
+            fwrite($file, $xml);
+            fclose($file);
+            $this->_helper->Logger->gravarlog('info', "Arquivo XML gerado.", 'Processamento');
+            
+        } catch (Exception $e) {
+            $this->_helper->Logger->gravarlog('err', utf8_encode($e->getMessage()), 'Processamento');
+        }
+        $this->_redirect('/');
+    }
+
+}

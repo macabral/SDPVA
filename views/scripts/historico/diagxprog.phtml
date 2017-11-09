@@ -1,0 +1,120 @@
+<!--
+// HistoricoController
+-->
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Diagnóstico x Prognóstico</strong></h1></div>
+    <div class="panel panel-body">
+        <h5>
+            <button type="button" class="btn btn-info" onclick="fVoltar();"> Voltar </button>
+            <button type="button" class="btn btn-primary" onclick="fExport();"> Exportar XLS </button>
+        </h5>
+        <div>
+            <form name="myform" method="post" action="<?php echo APPLICATION_DIR; ?>/historico/diagxprog">
+                <table class="tableForm" style="width:100%;">
+                    <tr>
+                        <td class="td1Form" style="width:140px;text-align:right;">
+                            <label for="dt1">Período&nbsp;</label>
+                            <input  type="text" name="dt1" id="dt1" class="tcal" style="width: 100px;" value="<?php echo $this->dt1 ?>"/>
+                            <input type="button" id="btnSalvar" onclick="fsalvar();" value="Filtrar">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <?php if (!empty($this->data)) { ?>
+                <table id="mytab" class="display" width='100%'>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora (SODAR)</th>
+                            <th>Data/Hora Prog</th>
+                            <th style="text-align:center">HR Prog</th>
+                            <th style="text-align:center">z</th>
+                            <th style="text-align:center">speed (SODAR)</th>
+                            <th style="text-align:center">vetor_kt (Prog)</th>
+                            <th style="text-align:center">direção (SODAR)</th>
+                            <th style="text-align:center">vetor_grau (Prog)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($this->data as $d) {
+                            $date = new Zend_Date($d['data_sodar']);
+                            $mydata = $date->toString("dd/MM/yyyy HH:mm");
+                            $date = new Zend_Date($d['datahora']);
+                            $mydata2 = $date->toString("dd/MM/yyyy HH:mm");
+                            ?>
+                            <tr>
+                                <td><?php echo $this->escape($mydata) ?></td>
+                                <td><?php echo $this->escape($mydata2) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['hr_prev']) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['z']) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['speed']) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['vetor_kt']) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['dir']) ?></td>
+                                <td style="text-align:center"><?php echo $this->escape($d['vetor_grau']) ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                    </tbody>
+                </table>
+                <br>
+                <?php
+            } else {
+                echo "Não foram encontrados registros.";
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#mytab').DataTable(
+                {
+                    "order": [[0, "desc"]],
+                    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Todas"]],
+                    language: {
+                        "sEmptyTable": "Nenhum registro encontrado",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "_MENU_ resultados por página",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "sSearch": "Pesquisar ",
+                        "oPaginate": {
+                            "sNext": " Próximo",
+                            "sPrevious": "Anterior ",
+                            "sFirst": "Primeiro",
+                            "sLast": "Último"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Ordenar colunas de forma ascendente",
+                            "sSortDescending": ": Ordenar colunas de forma descendente"
+                        }
+                    }
+                }
+        );
+    });
+
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+    function fsalvar() {
+        if (!isDate(document.getElementById('dt1').value)) {
+            alert("Por favor, preencha o valor correto no campo [Data de Início].");
+            document.forms["myform"].dt1.focus();
+            return;
+        }
+        document.forms["myform"].submit();
+    }
+    function fExport() {
+        var salvar = confirm("Confirma exportar os dados comparativos de Diagnóstico x Prognóstico?");
+        if (salvar == 1) {
+            var dt = document.forms["myform"].dt1.value;
+            location = "<?php echo APPLICATION_DIR; ?>/historico/exportdiagxprog?data=" + dt;
+        }
+    }
+</script>

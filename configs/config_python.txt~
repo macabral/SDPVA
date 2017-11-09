@@ -1,0 +1,14 @@
+#host
+localhost
+#user
+root
+#password
+L@bor@torio*#
+#database
+sdpva
+#diretorio_graficos
+/var/www/html/SDPVA/public/graficos/
+#diretorio_xml
+/var/www/html/SDPVA/public/xml/
+
+

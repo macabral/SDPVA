@@ -1,0 +1,98 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Trocar Senha</strong></h1></div>
+    <div class="panel panel-body">
+        <button type="button" class="btn btn-info" onclick="javascript:fVoltar();"> Voltar </button>
+        <hr>
+        <?php 
+        if (!empty($this->errorMsg)){
+            echo $this->errorMsg."<br><br>"; 
+        }
+        ?>
+        <form name="myform" class="form-horizontal" role="form" method="post" action="<?php echo APPLICATION_DIR; ?>/user/trocarsenha" onsubmit="return fSalvar();">
+
+            <!-- senha atual -->
+            <div class="form-group" form-group-lg>
+                <label for="senha1" class="col-sm-2 controllabel text-right">Senha Atual</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" name="senhaAtual" placeholder="Senha Atual. Tamanho mínimo de 4 caracteres e máximo de 15." maxlength="15" required value="<?php echo ""; ?>">
+                </div>
+            </div>
+            
+            <!-- nova senha -->
+            <div class="form-group" form-group-lg>
+                <label for="senha1" class="col-sm-2 controllabel text-right">Nova Senha</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" name="senhaNova1" placeholder="Nova Senha. Tamanho mínimo de 4 caracteres e máximo de 15." maxlength="15" required value="<?php echo ""; ?>">
+                </div>
+            </div>
+            
+            <!-- repetir nova senha -->
+            <div class="form-group" form-group-lg>
+                <label for="senha1" class="col-sm-2 controllabel text-right">Confirme a Nova Senha</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" name="senhaNova2" placeholder="Repetir a Nova Senha. Tamanho mínimo de 4 caracteres e máximo de 15." maxlength="15" required value="<?php echo ""; ?>">
+                </div>
+            </div>
+            
+            <!-- Salvar -->
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-primary"> Salvar </button>
+                    <input type="hidden" name="<?php echo $this->fieldName; ?>" value="<?php echo $this->token; ?>">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script language="javascript">
+    function fSalvar() {
+        var mysenhaAtual = document.myform.senhaAtual.value;
+        if (mysenhaAtual == "") {
+            alert("Preencha a senha atual.");
+            document.myform.senhaAtual.focus();
+            return false;
+        }
+        var mysenhaNova1 = document.myform.senhaNova1.value;
+        if (mysenhaNova1 == "") {
+            alert("Preencha a nova senha.");
+            document.myform.senhaNova1.focus();
+            return false;
+        }
+        var mysenhaNova2 = document.myform.senhaNova2.value;
+        if (mysenhaNova2 == "") {
+            alert("Preencha a confirmação da nova senha.");
+            document.myform.senhaNova2.focus();
+            return false;
+        }
+        if (mysenhaNova1 != mysenhaNova2) {
+            alert("A confirmação da senha não confere.")
+            document.myform.senhaNova1.value = "";
+            document.myform.senhaNova2.value = "";
+            document.myform.senhaNova1.focus();
+            return false;
+        }
+        if (mysenhaAtual == mysenhaNova1) {
+            alert("A nova senha deve ser diferente da senha atual.")
+            document.myform.senhaNova1.value = "";
+            document.myform.senhaNova2.value = "";
+            document.myform.senhaNova1.focus();
+            return false;
+        }
+        if (mysenhaNova1.length<6){
+            alert("A senha deve ter um tamanho mínimo de 6 caracteres e máximo de 15.");
+            return false;
+        }
+        if (mysenhaAtual.length<6){
+            alert("A senha deve ter um tamanho mínimo de 6 caracteres e máximo de 15.");
+            return false;
+        }
+
+        var salvar = confirm("Confirma salvar a nova senha?");
+        if (salvar == 1) {
+            return true;
+        }
+    }
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+</script>

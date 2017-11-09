@@ -1,0 +1,3 @@
+LOG RNA  
+Arquivo entrada_altitude.txt nao pode ser aberto
+  

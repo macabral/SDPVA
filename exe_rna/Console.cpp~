@@ -1,0 +1,565 @@
+// Copyright  1997, 1998 by Ward Systems Group, Inc.
+//
+// Aplicando o NeuroShell Run-Time no Microsoft Visual C++ compiler
+
+/* *************************************************************************************************** */
+/* Este programa foi desenvolvido por Antonius e, posteriormente, alterado por Bianca. */
+/* Resumo: Este programa recebe um arquivo texto de entrada contendo os dados de entrada da RNA 
+(27 variaveis no total + dia, mes, ano, hora e minuto) e calcula previsoes para as 3 horas seguintes, 
+para cada uma das redes de visibilidade, nevoeiro e teto. */
+/* *************************************************************************************************** */
+
+
+
+#include <time.h>
+#include <stdio.h>
+#include "nswrap.h"
+
+
+main()
+{
+ FILE *entrada;  // entrada = ponteiro do arquivo entrada
+ FILE *saida; // saida = ponteiro do arquivo de saida
+ int a; 
+ long ret1b, ret2b, ret3b,ret1c, ret2c, ret3c, ret1d, ret2d, ret3d, ret1e, ret2e, ret3e, numinputs, numoutputs, i;
+ int temp[5]; //Vetor com os valores da data
+ double ina[27]; //Numero de entradas da Rede
+
+ double winner_visib_1h,winner_visib_2h,winner_visib_3h; // vencedores para a rede visibilidade
+ double winner_nevoeiro_1h,winner_nevoeiro_2h,winner_nevoeiro_3h; // vencedores para a rede nevoeiro
+ double winner_qteto_1h,winner_qteto_2h,winner_qteto_3h; // vencedores para a rede qteto
+ double winner_teto_1h,winner_teto_2h,winner_teto_3h; // vencedores para a rede teto
+ double out_teto1_1h, out_teto1_2h, out_teto1_3h; // vencedores para a rede teto1 final
+ double out_teto2_1h, out_teto2_2h, out_teto2_3h; // vencedores para a rede teto2 final
+
+ double outb1[5]; // Saidas da Rede Visibilidade - 1a hora
+ double outb2[5]; // Saidas da Rede Visibilidade - 2a hora
+ double outb3[5]; // Saidas da Rede Visibilidade - 3a hora
+
+
+ double outc1[2]; // Saidas da Rede Nevoeiro - 1a hora
+ double outc2[2]; // Saidas da Rede Nevoeiro - 2a hora
+ double outc3[2]; // Saidas da Rede Nevoeiro - 3a hora
+
+ double outd1[2]; // Saidas da Rede QTeto - 1a hora
+ double outd2[2]; // Saidas da Rede QTeto - 2a hora
+ double outd3[2]; // Saidas da Rede QTeto - 3a hora
+  
+ double oute1[6]; // Saidas da Rede Teto - 1a hora
+ double oute2[6]; // Saidas da Rede Teto - 2a hora
+ double oute3[6]; // Saidas da Rede Teto - 3a hora
+
+ 
+ char *fname4="visib1h_faixas.net"; //Arquivo da Rede Visibilidade - 1a hora
+ char *fname5="visib2h_faixas.net"; //Arquivo da Rede Visibilidade - 2a hora
+ char *fname6="visib3h_faixas.net"; //Arquivo da Rede Visibilidade - 3a hora
+ char *fname7="visib1h_nevoeiro.net"; //Arquivo da Rede Nevoeiro - 1a hora
+ char *fname8="visib2h_nevoeiro.net"; //Arquivo da Rede Nevoeiro - 2a hora
+ char *fname9="visib3h_nevoeiro.net"; //Arquivo da Rede Nevoeiro - 3a hora
+ char *fname10="Qteto1h.net"; //Arquivo da Rede QTeto - 1a hora
+ char *fname11="Qteto2h.net"; //Arquivo da Rede QTeto - 2a hora
+ char *fname12="Qteto3h.net"; //Arquivo da Rede QTeto - 3a hora
+ char *fname13="teto1h_faixas.net"; //Arquivo da Rede Teto - 1a hora
+ char *fname14="teto2h_faixas.net"; //Arquivo da Rede Teto - 2a hora
+ char *fname15="teto3h_faixas.net"; //Arquivo da Rede Teto - 3a hora
+
+ float enhgen; //Valor algoritmo genetico (padrao = 0.5) 
+ 
+ struct tm time_str1; //estrutura necessaria para data 1
+ struct tm time_str2; //estrutura necessaria para data 2
+ struct tm time_str3; //estrutura necessaria para data 3
+	
+
+ char daybuf1[20]; //String de caracteres para data 1
+ char daybuf2[20]; //String de caracteres para data 2
+ char daybuf3[20]; //String de caracteres para data 3
+
+
+ //abrindo o arquivo entrada.txt 
+ if ((entrada=fopen("entrada.txt","r")) == NULL)
+ {
+	 printf("Arquivo nao pode ser aberto\n");
+	 return 0;	
+ }
+ else
+ {
+	for(a=0; a<5; a++) //lendo a data de entrata.txt
+	{
+		fscanf(entrada,"%d", &temp[a]);
+	}
+	for(a=5; a<33; a++) //lendo o arquivo entrada.txt e escrevendo no vetor de entrada da rede
+	{
+		fscanf(entrada,"%lf", &ina[a-5]);
+	}
+ 
+ }
+ fclose(entrada);
+
+ //Armazenando a hora na estrutura para data 1
+
+    time_str1.tm_year = temp[2] - 1900;
+    time_str1.tm_mon = temp[1] - 1;
+    time_str1.tm_mday = temp[0];
+    time_str1.tm_hour = temp[3]+ 1;
+    time_str1.tm_min = temp[4];
+    time_str1.tm_sec = 1;
+    time_str1.tm_isdst = -1;
+
+ //Armazenando a hora na estrutura para data 2
+
+    time_str2.tm_year = temp[2] - 1900;
+    time_str2.tm_mon = temp[1] - 1;
+    time_str2.tm_mday = temp[0];
+    time_str2.tm_hour = temp[3]+ 2;
+    time_str2.tm_min = temp[4];
+    time_str2.tm_sec = 1;
+    time_str2.tm_isdst = -1;
+
+ //Armazenando a hora na estrutura para data 3
+
+    time_str3.tm_year = temp[2] - 1900;
+    time_str3.tm_mon = temp[1] - 1;
+    time_str3.tm_mday = temp[0];
+    time_str3.tm_hour = temp[3]+ 3;
+    time_str3.tm_min = temp[4];
+    time_str3.tm_sec = 1;
+    time_str3.tm_isdst = -1;
+ 
+// imprimindo a entrada
+printf("Valores de entrada:\n ");
+for(a=0; a<27; a++) 
+{
+	printf("Variavel %d = %g\n ", a, ina[a]);
+}
+
+//printf("Default enhanced generalization value: %g\n\n", enhgen);
+
+//------INICIO DA REDE 1B----------------------------------------------------------------
+
+ ret1b=OpenNetwork(fname4, &numinputs, &numoutputs, &enhgen);
+
+ if (ret1b==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret1b=FireNetwork(ina, outb1, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_visib1h = %lf\n", i+1, outb1[i]);
+   
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret1b=CloseNetwork();
+   
+//------FIM DA REDE 1B-------------------------------------------------------------------
+
+
+
+//------INICIO DA REDE 2B----------------------------------------------------------------
+ ret2b=OpenNetwork(fname5, &numinputs, &numoutputs, &enhgen);
+
+ if (ret2b==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret2b=FireNetwork(ina, outb2, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_visib2h = %lf\n", i+1, outb2[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret2b=CloseNetwork();
+
+//------FIM DA REDE 2B-------------------------------------------------------------------
+
+
+
+//------INICIO DA REDE 3B----------------------------------------------------------------
+ ret3b=OpenNetwork(fname6, &numinputs, &numoutputs, &enhgen);
+
+ if (ret3b==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret3b=FireNetwork(ina, outb3, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_visib3h = %lf\n", i+1, outb3[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret3b=CloseNetwork();
+//------FIM DA REDE 3B-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 1C----------------------------------------------------------------
+ ret1c=OpenNetwork(fname7, &numinputs, &numoutputs, &enhgen);
+
+ if (ret1c==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret1c=FireNetwork(ina, outc1, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_nevoeiro1h = %lf\n", i+1, outc1[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret1c=CloseNetwork();
+//------FIM DA REDE 1C-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 2C----------------------------------------------------------------
+ ret2c=OpenNetwork(fname8, &numinputs, &numoutputs, &enhgen);
+
+ if (ret2c==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret2c=FireNetwork(ina, outc2, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_nevoeiro2h = %lf\n", i+1, outc2[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret2c=CloseNetwork();
+
+//------FIM DA REDE 2C-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 3C----------------------------------------------------------------
+ ret3c=OpenNetwork(fname9, &numinputs, &numoutputs, &enhgen);
+
+ if (ret3c==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret3c=FireNetwork(ina, outc3, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_nevoeiro3h = %lf\n", i+1, outc3[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret3c=CloseNetwork();
+
+//------FIM DA REDE 3C-------------------------------------------------------------------
+
+
+
+//------INICIO DA REDE 1D----------------------------------------------------------------
+ ret1d=OpenNetwork(fname10, &numinputs, &numoutputs, &enhgen);
+
+ if (ret1d==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret1d=FireNetwork(ina, outd1, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_qteto1h = %lf\n", i+1, outd1[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret1d=CloseNetwork();
+
+//------FIM DA REDE 1D-------------------------------------------------------------------
+
+
+
+//------INICIO DA REDE 2D----------------------------------------------------------------
+ ret2d=OpenNetwork(fname11, &numinputs, &numoutputs, &enhgen);
+
+ if (ret2d==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret2d=FireNetwork(ina, outd2, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_qteto2h = %lf\n", i+1, outd2[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret2d=CloseNetwork();
+
+//------FIM DA REDE 2D-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 3D----------------------------------------------------------------
+ret3d=OpenNetwork(fname12, &numinputs, &numoutputs, &enhgen);
+
+if (ret3d==0) //Rede aberta com sucesso
+{
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret3d=FireNetwork(ina, outd3, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_qteto3h = %lf\n", i+1, outd3[i]);
+}
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret3d=CloseNetwork();
+
+//------FIM DA REDE 2D-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 1E----------------------------------------------------------------
+ ret1e=OpenNetwork(fname13, &numinputs, &numoutputs, &enhgen);
+
+ if (ret1e==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret1e=FireNetwork(ina, oute1, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_teto1h = %lf\n", i+1, oute1[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret1e=CloseNetwork();
+
+//------FIM DA REDE 1E-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 2E----------------------------------------------------------------
+ ret2e=OpenNetwork(fname14, &numinputs, &numoutputs, &enhgen);
+
+ if (ret2e==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret2e=FireNetwork(ina, oute2, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_teto2h = %lf\n", i+1, oute2[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret2e=CloseNetwork();
+
+//------FIM DA REDE 2E-------------------------------------------------------------------
+
+
+//------INICIO DA REDE 3E----------------------------------------------------------------
+ ret3e=OpenNetwork(fname15, &numinputs, &numoutputs, &enhgen);
+
+ if (ret3e==0) //Rede aberta com sucesso
+ {
+   //Rodando a rede com o valor de Generalizacao Padrao
+   ret3e=FireNetwork(ina, oute3, &enhgen);
+   for (i=0; i<numoutputs; i++) printf("Faixa%d_teto3h = %lf\n", i+1, oute3[i]);
+ }
+   else //Erro abrindo a rede!
+   printf("Error abrindo a rede.\n");
+   
+	//Liberando memoria. 
+   ret3e=CloseNetwork();
+
+//------FIM DA REDE 3E-------------------------------------------------------------------
+
+//------VERIFICANDO A FAIXA VENCEDORA (faixa 1, 2, 3, 4 ou 5 - somente para rede visibilidade)-----------------------------
+ 
+   winner_visib_1h = outb1[0];
+   winner_visib_2h = outb2[0];
+   winner_visib_3h = outb3[0];
+
+   for(i=1;i<5;i++) {
+	   if (outb1[i] > winner_visib_1h) {
+		   winner_visib_1h = outb1[i];
+	   }
+	   if (outb2[i] > winner_visib_2h) {
+		   winner_visib_2h = outb2[i];
+	   }
+	   if (outb3[i] > winner_visib_3h) {
+		   winner_visib_3h = outb3[i];
+	   }
+   }
+
+   for (i = 0; i < 5; i++) {
+	   if (winner_visib_1h == outb1[i]) {
+		   winner_visib_1h = i + 1;
+	   }
+   	   if (winner_visib_2h == outb2[i]) {
+		   winner_visib_2h = i + 1;
+	   }
+   	   if (winner_visib_3h == outb3[i]) {
+		   winner_visib_3h = i + 1;
+	   }
+   }
+
+
+   
+
+//VERIFICANDO NEVOEIRO (faixa 1 ou 2 - somente para rede nevoeiro)
+
+   if(outc1[0]<=outc1[1])
+	   winner_nevoeiro_1h = 2;
+   else
+	   winner_nevoeiro_1h = 1;
+
+   if(outc2[0]<=outc2[1])
+	   winner_nevoeiro_2h = 2;
+   else
+	   winner_nevoeiro_2h = 1;
+
+   if(outc3[0]<=outc3[1])
+	   winner_nevoeiro_3h = 2;
+    else
+	   winner_nevoeiro_3h = 1;
+   
+
+//VERIFICANDO QTETO (faixa 1 ou 2 - somente para rede qteto)
+
+   if(outd1[0]<=outd1[1])
+	   winner_qteto_1h = 2;
+   else
+	   winner_qteto_1h = 1;
+
+   if(outd2[0]<=outd2[1])
+	   winner_qteto_2h = 2;
+   else
+	   winner_qteto_2h = 1;
+
+   if(outd3[0]<=outd3[1])
+	   winner_qteto_3h = 2;
+    else
+	   winner_qteto_3h = 1;
+
+
+//------VERIFICANDO A FAIXA VENCEDORA (faixa 1, 2, 3, 4 ou 5 - somente para rede teto)-----------------------------
+
+   winner_teto_1h = oute1[0];
+   winner_teto_2h = oute2[0];
+   winner_teto_3h = oute3[0];
+
+   for(i=1;i<5;i++) {
+	   if (oute1[i] > winner_teto_1h) {
+		   winner_teto_1h = oute1[i];
+	   }
+	   if (oute2[i] > winner_teto_2h) {
+		   winner_teto_2h = oute2[i];
+	   }
+	   if (oute3[i] > winner_teto_3h) {
+		   winner_teto_3h = oute3[i];
+	   }
+   }
+
+   for (i = 0; i < 5; i++) {
+	   if (winner_teto_1h == oute1[i]) {
+		   winner_teto_1h = i + 1;
+	   }
+   	   if (winner_teto_2h == oute2[i]) {
+		   winner_teto_2h = i + 1;
+	   }
+   	   if (winner_teto_3h == oute3[i]) {
+		   winner_teto_3h = i + 1;
+	   }
+   }
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+   // imprimindo a faixa vencedora - rede visibilidade
+   printf("Faixa vencedora (1h) - Rede Visibilidade: %g\n", winner_visib_1h);
+   printf("Faixa vencedora (2h) - Rede Visibilidade: %g\n", winner_visib_2h);
+   printf("Faixa vencedora (3h) - Rede Visibilidade: %g\n", winner_visib_3h);
+
+   // imprimindo a faixa vencedora - rede nevoeiro
+   printf("Faixa vencedora (1h) - Rede Nevoeiro: %g\n", winner_nevoeiro_1h);
+   printf("Faixa vencedora (2h) - Rede Nevoeiro: %g\n", winner_nevoeiro_2h);
+   printf("Faixa vencedora (3h) - Rede Nevoeiro: %g\n", winner_nevoeiro_3h);
+
+   // imprimindo a faixa vencedora - rede qteto
+   printf("Faixa vencedora (1h) - Rede QTeto: %g\n", winner_qteto_1h);
+   printf("Faixa vencedora (2h) - Rede QTeto: %g\n", winner_qteto_2h);
+   printf("Faixa vencedora (3h) - Rede QTeto: %g\n", winner_qteto_3h);
+
+   // imprimindo a faixa vencedora - rede teto
+   printf("Faixa vencedora (1h) - Rede Teto: %g\n", winner_teto_1h);
+   printf("Faixa vencedora (2h) - Rede Teto: %g\n", winner_teto_2h);
+   printf("Faixa vencedora (3h) - Rede Teto: %g\n", winner_teto_3h);
+
+	// montando o resultado final
+
+   // para a rede de visibilidade por faixas
+ if (winner_visib_1h != 1) {
+	 winner_visib_1h = 0;
+ }
+
+ if (winner_visib_2h != 1) {
+	 winner_visib_2h = 0;
+ }
+ 
+ if (winner_visib_3h != 1) {
+	 winner_visib_3h = 0;
+ }
+ 
+
+ // para a rede de nevoeiro (a primeira faixa eh nao-nevoeiro)
+ if (winner_nevoeiro_1h == 1) {
+	 winner_nevoeiro_1h = 0;
+ }
+ else {
+	 winner_nevoeiro_1h = 1;
+ }
+
+ if (winner_nevoeiro_2h == 1) {
+	 winner_nevoeiro_2h = 0;
+ }
+ else {
+	 winner_nevoeiro_2h = 1;
+ }
+
+ if (winner_nevoeiro_3h == 1) {
+	 winner_nevoeiro_3h = 0;
+ }
+ else {
+	 winner_nevoeiro_3h = 1;
+ }
+
+
+ 
+ // imprimindo os resultados
+ printf("Resultado Visib1h: %g\n", winner_visib_1h);
+ printf("Resultado Visib2h: %g\n", winner_visib_2h);
+ printf("Resultado Visib3h: %g\n", winner_visib_3h);
+
+ printf("Resultado Nevoeiro1h: %g\n", winner_nevoeiro_1h);
+ printf("Resultado Nevoeiro2h: %g\n", winner_nevoeiro_2h);
+ printf("Resultado Nevoeiro3h: %g\n", winner_nevoeiro_3h);
+
+ printf("Resultado Qteto1h: %g, Resultado Qteto2h: %g, Resultado Qteto3h: %g\n", winner_qteto_1h,winner_qteto_2h,winner_qteto_3h);
+ printf("Resultado Teto1h: %g, Resultado Teto2h: %g, Resultado Teto3h: %g\n", winner_teto_1h,winner_teto_2h,winner_teto_3h);
+ 
+
+//abrindo o arquivo de saida da rede (saida.txt)
+ if ((saida=fopen("saida.txt","w")) == NULL)
+ {
+	 printf("Arquivo nao pode ser aberto\n");
+	 return 0;	
+ }
+ else
+ {
+	 if (mktime(&time_str1) == -1 || mktime(&time_str2) == -1 || mktime(&time_str3) == -1)
+        (void)puts("-unknown-");
+	 else
+	 {
+	strftime(daybuf1, sizeof(daybuf1), "%d %m %Y %H %M ", &time_str1);
+	fputs(daybuf1,saida);
+	fprintf(saida, "%g %g %g %g \n", winner_visib_1h, winner_nevoeiro_1h, winner_teto_1h, winner_qteto_1h); //escrevendo no arquivo saida.txt
+
+	strftime(daybuf2, sizeof(daybuf2), "%d %m %Y %H %M ", &time_str2);
+	fputs(daybuf2,saida);
+	fprintf(saida, "%g %g %g %g \n", winner_visib_2h,winner_nevoeiro_2h, winner_teto_2h, winner_qteto_2h); //escrevendo no arquivo saida.txt
+
+	strftime(daybuf3, sizeof(daybuf3), "%d %m %Y %H %M ", &time_str3);
+	fputs(daybuf3,saida);
+	fprintf(saida, "%g %g %g %g", winner_visib_3h,winner_nevoeiro_3h, winner_teto_3h, winner_qteto_3h); //escrevendo no arquivo saida.txt
+	 }	
+	
+	 
+ }
+
+    fclose(saida); //fechando o arquivo de saida
+
+    //printf("\nPress any key to continue");
+    //getchar();
+
+ 
+}

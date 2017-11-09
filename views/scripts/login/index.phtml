@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Login</strong></h1></div>
+    <div class="panel panel-body">
+        <form class="form-horizontal" role="form" action="login" method="post">
+            <div class="form-group" form-group-lg>
+                <label for="Email_user" class="col-sm-2 controllabel">Nome</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="username" placeholder="Informe seu nome de usuário" maxlength="15"  autocomplete="off" required>
+                </div>
+            </div>
+            <div class="form-group" form-group-sm>
+                <label for="inputPassword" class="col-sm-2 controllabel">Senha</label>
+                <div class="col-sm-3">
+                    <input type="password" class="form-control" name="senha" placeholder="Informe sua senha" maxlength="15"   autocomplete="off"  required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-primary"> Login </button>
+                    <input type="hidden" name="<?php echo $this->fieldName; ?>" value="<?php echo $this->token; ?>">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

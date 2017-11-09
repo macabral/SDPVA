@@ -1,0 +1,24 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>SDPVA Error</title>
+</head>
+<body>
+<h1></h1>
+<h1><?php  echo $this->message?></h1>
+<p>Por favor, avise o Administrador do sistema encaminhando um email para admin@sdtp.org.br.</p>
+
+<?php 
+//if ('development' == APPLICATION_ENV) { ?>
+
+	<?php  //if ($this->message !== "Página não encontrada") {?>
+	<h3>Trace</h3>
+	<pre><?php echo $this->exception->getTraceAsString()?></pre>
+	
+	<h3>Parametros</h3>
+	<pre><?php var_dump($this->request->getParams())?></pre>
+	<h3>Detalhes</h3>
+	<pre><?php var_dump($this->errors)?></pre>
+	<?php //}?>
+<?php //} ?>
+</body>

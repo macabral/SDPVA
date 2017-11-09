@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <meta http-equiv='cash-control' content='no-cache' />
+
+        <link rel='shortcut icon' type='image/x-icon' href='images/favicon.ico'>
+
+        <title>SDPVA</title>
+
+        <!-- css -->
+        <link href='<?php echo APPLICATION_DIR; ?>/public/css/bootstrap.min.css' media='screen' rel='stylesheet' type='text/css'>
+        <link href='<?php echo APPLICATION_DIR; ?>/public/css/estilo.css' media='screen' rel='stylesheet' type='text/css' />
+        <link rel='stylesheet' type='text/css' href='<?php echo APPLICATION_DIR; ?>/public/css/demo_table.css'  />
+
+        <!-- js -->
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/jquery-1.11.3.min.js'></script>
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/bootstrap.min.js'></script>
+        <script type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/myfunctions.js'></script>
+        <SCRIPT type='text/javascript' src='<?php echo APPLICATION_DIR; ?>/public/js/jquery.dataTables.min.js' ></SCRIPT>
+
+        <script type="text/javascript">
+            function updateClock()
+            {
+                var currentTime = new Date( );
+                var urlname = window.location.pathname;
+                var currentMinutes = currentTime.getMinutes( );
+                var currentSeconds = currentTime.getSeconds ( );
+                currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+                if (currentMinutes == "01" || currentMinutes == "16" || currentMinutes == "31" || currentMinutes == "46") {
+                        if (currentSeconds=="01") {
+                            location.reload();
+                        }
+                }
+            }
+        </script>
+    </head>
+    <body onload="updateClock(); setInterval('updateClock()', 1000)">
+        <div id='conteudo' class='conteudo'>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h1><strong>
+                <i class="fa fa-file-text"></i> Arquivos SODAR SBRJ</strong></h1></div>
+                <div class="panel panel-body">
+                    <br />
+                    <a href="/SDPVA/public/downloads/APRun_1_38.msi">APRun_1_38.msi - Instalador do APRun</a><br/>
+                    <a href="/SDPVA/public/downloads/APRun_Manual_1_22.pdf" target="_blank">Manual do APRun</a><br/>
+                    <br /><br />
+                    <?php
+                    if (is_dir($this->localAPRUN)) {
+                        $scandir = array_diff(scandir($this->localAPRUN,1), array('..', '.'));
+                        foreach ($scandir as $key => $file) {
+                            $arq = APP_HOST . "/SDPVA/public/xml/" . $this->local . '/mnd/' . $file;
+                            $msize = filesize($this->localAPRUN.$file);
+                            if ($msize <> 0) {?>
+                                <a href="<?php echo $arq; ?>" download><?php echo $file . "  (" . round($msize/1024,0) . "KB" . ")"; ?></a>&nbsp;&nbsp;
+                            <?php }
+                        }}
+                    ?>
+                </div>
+            </div>
+        </div>
+        </br /></br>
+    </body>
+</html>

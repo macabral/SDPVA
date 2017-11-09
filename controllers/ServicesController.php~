@@ -1,0 +1,75 @@
+<?php
+
+// o arquivo xml a ser devolvido está armazenado na tabela xmlfile
+// esta tabela deve ter o nome do último arquivo xml gerado no processamento.
+
+require "processamentodb.php";
+require "clientesxmldb.php";
+
+class servicesController extends Zend_Controller_Action {
+
+    public function restAction() {
+        $server = new Zend_Rest_Server();
+        $server->setClass("ServiceClass");
+        $server->handle();
+        exit;
+    }
+}
+
+class ServiceClass {
+
+    public function getXML($tipo) {
+        // identifica o último arquivo xml gerado
+        // envia o arquivo xml
+        // tipo "D" arquivo de diagnóstico e "P" prognóstico
+        $processamentodb = new processamentodb();
+        $arq = APP_XML . $processamentodb->getfile($tipo);
+        try {
+            if (file_exists($arq)) {
+                $data = file_get_contents($arq, true);
+                return $data;
+            } else {
+                return array('msg' => "Não foi possível encontrar o arquivo " . $arq, 'status' => false, 'code' => 401);
+            }
+        } catch (Exception $e) {
+            return utf8_encode($e->getMessage());
+        }
+    }
+
+    public function sendXML($tipo) {
+        // log de arquivos enviados
+        $log = ""; $error = "";
+
+        // identifica o último arquivo xml gerado
+        $processamentodb = new processamentodb();
+        $filename = $processamentodb->getfile($tipo);
+        $arq = APP_XML . $filename;
+        $log .= "Arquivo: " . $arq . "\n";
+        
+        try {
+            if (file_exists($arq)) {
+                $post_data = file_get_contents($arq, true);
+            } else {
+                return array('msg' => "Não foi possível encontrar o arquivo " . $arq, 'status' => false, 'code' => 401);
+            }
+        } catch (Exception $e) {
+            return array('msg' => utf8_encode($e->getCode() . ": " . $e->getMessage()), 'status' => false, 'code' => 401);
+        }
+        // envia arquivos XML para os clientes XML
+        $clientesxmldb = new clientesxmldb();
+        $clientesxmlData = $clientesxmldb->getAtivos();
+        foreach ($clientesxmlData as $d) {
+            try {
+                $client = new Zend_Http_Client($d['url']);
+                $client->setRawData($post_data, 'text/xml')->request('POST');
+                $log .= "Enviando para " . $d['identificacao'] . " [" . $d['url'] . "]\n";
+            } catch (Zend_Http_Client_Exception $e) {
+                $error .= "Enviando para " . $d['identificacao'] . " " .utf8_encode($e->getCode() . ": " . $e->getMessage()) . "\n";
+            }
+        }
+        if (!empty($error)){
+            return array('msg' =>  $error, 'status' => false, 'code' => 401);
+        } 
+        return array('msg' => $log , 'status' => true, 'code' => 200);
+    }
+}

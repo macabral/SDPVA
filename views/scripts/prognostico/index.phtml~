@@ -1,0 +1,132 @@
+<!-- 
+Visualização de gráficos de prognóstico
+prognosticoController
+-->
+
+<meta http-equiv="refresh" content="900">
+
+<h3><b>Prognóstico | 
+    Pista Ref: <?php echo $this->pistaref; ?> | Data Ref: <?php echo $this->datap; ?></b> - Em Teste</h3>
+
+<div class="row">
+    <div class="col-md-6">
+
+        <!-- Previsão 15 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t15_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t15_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display">
+            <thead>    
+                <tr>
+                    <th>z(ft)</th>
+                    <th>Vetor(kt)</th>
+                    <th>Vetor (graus)</th>
+                    <th>Proa(kt)</th>
+                    <th>Cauda(kt)</th>
+                    <th>Traves Esq(kt)</th>
+                    <th>Traves Dir(kt)</th>
+                    <th>Windshear (kt/1000ft)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->prognosticoData15 as $d) {
+                    ?>
+                    <tr>
+                        <td><?php echo $d['z']; ?></td>
+                        <td><?php echo $d['vetor_kt']; ?></td>
+                        <td><?php echo $d['vetor_grau']; ?></td>
+                        <td><?php echo $d['proa']; ?></td>
+                        <td><?php echo $d['cauda']; ?></td>
+                        <td><?php echo $d['traves_esq']; ?></td>
+                        <td><?php echo $d['traves_dir']; ?></td>
+                        <td><?php echo $d['windshear']; ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <!-- Previsão 30 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t30_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t30_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display" width='100%'>
+            <thead>    
+                <tr>
+                    <th>z(ft)</th>
+                    <th>Vetor(kt)</th>
+                    <th>Vetor (graus)</th>
+                    <th>Proa(kt)</th>
+                    <th>Cauda(kt)</th>
+                    <th>Traves Esq(kt)</th>
+                    <th>Traves Dir(kt)</th>
+                    <th>Windshear (kt/1000ft)</th>
+                </tr>
+            </thead>
+            <?php
+            foreach ($this->prognosticoData30 as $d) {
+                ?>
+                <tr>
+                    <td><?php echo $d['z']; ?></td>
+                    <td><?php echo $d['vetor_kt']; ?></td>
+                    <td><?php echo $d['vetor_grau']; ?></td>
+                    <td><?php echo $d['proa']; ?></td>
+                    <td><?php echo $d['cauda']; ?></td>
+                    <td><?php echo $d['traves_esq']; ?></td>
+                    <td><?php echo $d['traves_dir']; ?></td>
+                    <td><?php echo $d['windshear']; ?></td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+
+        <!-- Previsão 45 min -->
+        <h4>Hora Previsão: <b><?php echo $this->t45_previsaoHora; ?></b> | Pista Sugerida: <b><?php echo $this->t45_pistaSugerida; ?></b></h4>
+        <table id="mytab" class="display" width='100%'>
+            <thead>    
+                <tr>
+                    <th>z(ft)</th>
+                    <th>Vetor(kt)</th>
+                    <th>Vetor (graus)</th>
+                    <th>Proa(kt)</th>
+                    <th>Cauda(kt)</th>
+                    <th>Traves Esq(kt)</th>
+                    <th>Traves Dir(kt)</th>
+                    <th>Windshear (kt/1000ft)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->prognosticoData45 as $d) {
+                    ?>
+                    <tr>
+                        <td><?php echo $d['z']; ?></td>
+                        <td><?php echo $d['vetor_kt']; ?></td>
+                        <td><?php echo $d['vetor_grau']; ?></td>
+                        <td><?php echo $d['proa']; ?></td>
+                        <td><?php echo $d['cauda']; ?></td>
+                        <td><?php echo $d['traves_esq']; ?></td>
+                        <td><?php echo $d['traves_dir']; ?></td>
+                        <td><?php echo $d['windshear']; ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <br>
+        <!-- Exibe Gráfico -->
+        <center><img src="<?php echo APP_IMAGES . $this->pistagr; ?>" width="15%" height="15%"></center>
+        <center>
+            <a href="#" onclick="fExibeGrafico();">
+                <img src="<?php echo APP_GRAPH . $this->grafico; ?>?12345678890.1234" width="92%" >
+            </a>
+            <img src="<?php echo APP_IMAGES . 'paleta.jpg' ?>"  width="7%" height="1%">
+        </center>
+    </div>
+</div>
+<script type="text/javascript">
+    function fExibeGrafico() {
+        var grafico = "<?php echo $this->grafico; ?>";
+        var txt = '<?php echo APP_HOST . APP_GRAPH; ?>' + grafico + '?no-cache="' + Number(new Date()) + '"';
+        window.open(txt, "SDPVA - Prognóstico", "directories=no,status=0,toolbar=0,width=600,height=500,location=no,menubar=no");
+    }
+</script>

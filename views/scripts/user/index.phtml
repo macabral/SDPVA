@@ -1,0 +1,96 @@
+<!--
+// Cadastro de Usuários
+// UserController.php
+-->
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Usuários</strong></h1></div>
+    <div class="panel panel-body">
+        <h5>
+            <button type="button" class="btn btn-info" onclick="fVoltar();"> Voltar </button>
+            <button type="button" class="btn btn-primary" onclick="fInserir(0);"> Inserir Usuário</button>
+        </h5>
+        <div>
+            <table id="mytab" class="display" width='100%'>
+                <thead>    
+                    <tr>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th>email</th>
+                        <th>Admin</th>
+                        <th>Ativo</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $cont = 0;
+                    foreach ($this->usuData as $d) {
+                        ?>
+                        <tr>
+                <td><?php echo $this->escape($d['nome']) ?></td>
+                <td><?php echo $this->escape($d['login']) ?></td>
+                <td><?php echo $this->escape($d['email']) ?></td>
+                <td><?php
+        if ($d['admin'] == 1) {
+            echo 'Sim';
+        } else {
+            echo 'Não';
+        }
+            ?></td>
+                <td><?php
+                    if ($d['ativo'] == 1) {
+                        echo 'Sim';
+                    } else {
+                        echo 'Não';
+                    }
+                    ?></td>
+                <td>
+                    <a href="#" onclick="fInserir(<?php echo $d['idusu']; ?>)" title="Editar"><img src="<?php echo APP_IMAGES; ?>/edit.png"></a>&nbsp;&nbsp;
+                 </td>
+            </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#mytab').DataTable(
+                {
+                    "order": [[1, "asc"], [2, "asc"]],
+                    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Todas"]],
+                    language: {
+                        "sEmptyTable": "Nenhum registro encontrado",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "_MENU_ resultados por página",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "sSearch": "Pesquisar ",
+                        "oPaginate": {
+                            "sNext": " Próximo",
+                            "sPrevious": "Anterior ",
+                            "sFirst": "Primeiro",
+                            "sLast": "Último"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Ordenar colunas de forma ascendente",
+                            "sSortDescending": ": Ordenar colunas de forma descendente"
+                        }
+                    }
+                }
+        );
+    });
+
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>";
+    }
+    function fInserir(id) {
+        location = "<?php echo APPLICATION_DIR; ?>/user/caduser/id/" + id;
+    }
+</script>

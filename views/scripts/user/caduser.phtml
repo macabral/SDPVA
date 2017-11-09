@@ -1,0 +1,106 @@
+<?php
+if ($this->userData['admin'] == 1) {
+    $admin = "checked";
+} else {
+    $admin = "";
+}
+if ($this->userData['ativo'] == 1) {
+    $ativo = "checked";
+} else {
+    $ativo = "";
+}
+if ($this->userData['trocarsenha'] == 1) {
+    $trocarsenha = "checked";
+} else {
+    $trocarsenha = "";
+}
+?>
+<div class="panel panel-default">
+    <div class="panel-heading"><h1><strong>Cadastro de Usuários</strong></h1></div>
+    <div class="panel panel-body">
+        <button type="button" class="btn btn-info" onclick="javascript:fVoltar();"> Voltar </button>
+        <button type="button" class="btn btn-primary" onclick="javascript:fInserir(0);"> Inserir Usuário </button>
+        <?php if ($this->id <> 0) { ?>
+            <button type="button" class="btn btn-danger"  onclick="javascript:fExcluir(<?php echo $this->id; ?>);"> Excluir Usuário</button>
+            <button type="button" class="btn btn-warning" onclick="javascript:fReset(<?php echo $this->id; ?>);"> Resetar Senha </button>
+        <?php } ?>
+        <hr>
+        <?php
+        if (!empty($this->errorMsg)) {
+            echo $this->errorMsg . "<br><br>";
+        }
+        ?>
+        <form class="form-horizontal" role="form" action="<?php echo APPLICATION_DIR; ?>/user/caduser/id/<?php echo $this->id; ?>" method="post">
+            <!-- nome -->
+            <div class="form-group" form-group-lg>
+                <label for="nome" class="col-sm-2 controllabel text-right">Nome</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="nome" placeholder="Nome" maxlength="75" required value="<?php echo $this->userData['nome']; ?>">
+                </div>
+            </div>
+            <!-- login -->
+            <div class="form-group" form-group-sm>
+                <label for="login" class="col-sm-2 controllabel text-right">Login</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="login" placeholder="Login. O tamanho mínimo é de 4 caracteres e máximo de 15." maxlength="15" required value="<?php echo $this->userData['login']; ?>">
+                </div>
+            </div>
+            <!-- email -->
+            <div class="form-group" form-group-sm>
+                <label for="email" class="col-sm-2 controllabel text-right">Email</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="email" placeholder="email" maxlength="65" required value="<?php echo $this->userData['email']; ?>">
+                </div>
+            </div>
+            <!-- admin -->
+            <div class="form-group" form-group-sm>
+                <label for="admin" class="col-sm-2 controllabel text-right">Administrador</label>
+                <div class="col-sm-1">
+                    <input type="checkbox" class="form-control" name="admin"   <?php echo $admin; ?>>
+                </div>
+            </div>
+            <!-- trocarsenha -->
+            <div class="form-group" form-group-sm>
+                <label for="trocarsenha" class="col-sm-2 controllabel text-right">Trocar Senha</label>
+                <div class="col-sm-1">
+                    <input type="checkbox" class="form-control" name="trocarsenha"   <?php echo $trocarsenha; ?>>
+                </div>
+            </div>
+            <!-- ativo -->
+            <div class="form-group" form-group-sm>
+                <label for="ativo" class="col-sm-2 controllabel text-right">Ativo</label>
+                <div class="col-sm-1">
+                    <input type="checkbox" class="form-control" name="ativo"   <?php echo $ativo; ?>>
+                </div>
+            </div>
+            <!-- Salvar -->
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-primary"> Salvar </button>
+                    <input type="hidden" name="<?php echo $this->fieldName; ?>" value="<?php echo $this->token; ?>">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<?php echo $this->id ?>
+<script type="text/javascript">
+    function fVoltar() {
+        location = "<?php echo APPLICATION_DIR; ?>/user";
+    }
+    function fInserir(id) {
+        location = "<?php echo APPLICATION_DIR; ?>/user/caduser/id/" + id;
+    }
+    function fExcluir(id) {
+        var salvar = confirm("Confirma Excluir Usuário?");
+        if (salvar == 1) {
+            location = "<?php echo APPLICATION_DIR; ?>/user/excluir/id/" + id;
+        }
+    }
+    function fReset(id) {
+        var salvar = confirm("Confirma Resetar a Senha do Usuário? \n\nA senha será resetada para '12345678'.\nNo próximo Login ele será solicitado a alterar a senha.");
+        if (salvar == 1) {
+            location = "<?php echo APPLICATION_DIR; ?>/user/resetsenha/id/"+id; 
+        }
+    }
+</script>

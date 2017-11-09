@@ -1,0 +1,83 @@
+<div id="msg"><?php echo $this->mensagem; ?></div>
+<hr class="space" />
+<a id='alnk' href="<?php echo ROOT_DIR; ?>/user">Voltar</a> <a id='alnk' href="<?php echo ROOT_DIR; ?>/user/caduser?iduser=0">Adicionar Usuário</a>
+<hr class="space" />
+<?php 
+    if ($this->errorMsg) {
+    	echo "<div id='errormsg'>";
+    	if ($this->icone==1){ $img=APP_IMAGES."/ok.png"; } else {$img=APP_IMAGES."/alerta.png";}
+    	echo "<img src='$img' style='padding-right: 10px; float:left;'>";
+    	echo $this->errorMsg.'</div><br>';
+    }
+    if ($this->userData['ativo']==1 or $this->iduser==0){
+    	$ativo = "checked";
+    } else {
+    	$ativo = "";
+    } 
+    if ($this->userData['admin']==1){ $admin = "checked"; } else { $admin = ""; }
+    if ($this->userData['perfiltp']==1){ $perfiltp = "checked"; } else { $perfiltp = ""; }
+    if ($this->userData['perfilrh']==1){ $perfilrh = "checked"; } else { $perfilrh = ""; }   
+    if ($this->userData['perfilos']==1){ $perfilos = "checked"; } else { $perfilos = ""; }
+    if ($this->userData['perfilfin']==1){ $perfilfin = "checked"; } else { $perfilfin = ""; } 
+    if ($this->userData['perfildoc']==1){ $perfildoc = "checked"; } else { $perfildoc = ""; }   
+    if ($this->userData['perfildoc_inserir']==1){ $perfildoc_inserir = "checked"; } else { $perfildoc_inserir = ""; }
+    if ($this->userData['perfilfin_inserir']==1){ $perfilfin_inserir = "checked"; } else { $perfilfin_inserir = ""; }       
+?>  
+<form name="myform" method="post" action="<?php echo ROOT_DIR; ?>/user/caduser?iduser=<?php echo $this->iduser?>">
+<table class="tableForm" width="100%">
+<tr><td class="td1Form" style="width:140px;text-align:right;"><label for="nome"><b>Nome* </b></label></td><td class="td2Form"><input id="nome" name="nome" type="text" maxlength="75" dojoType="dijit.form.TextBox" style="width: 400px;height:17px;" value="<?php echo $this->userData['nome']?>"/></td></tr>
+<tr><td class="td1Form" style="width:140px;text-align:right;"><label for="login"><b>Login* </b></label></td><td class="td2Form"><input id="login" name="login" type="text" maxlength="25" dojoType="dijit.form.TextBox" style="width: 200px;height:17px;" value="<?php echo $this->userData['login']?>"/></td></tr>
+<tr><td class="td1Form" style="width:140px;text-align:right;"><label for="email"><b>e-mail* </b></label></td><td class="td2Form"><input id="email" name="email" type="text" maxlength="65" dojoType="dijit.form.TextBox" style="width: 400px;height:17px;" value="<?php echo $this->userData['email']?>"/></td></tr>
+<tr><td class="td1Form" style="width:140px;text-align:right;"><label for="ativo">Ativo&nbsp;</label></td>
+		<td class="td2Form">
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="ativo" id="ativo"  <?php echo $ativo ?> />	
+</td></tr>
+<tr><td class="td1Form" style="width:140px;text-align:right;"><label for="admin">Administrador&nbsp;</label></td>
+		<td class="td2Form">
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="admin" id="admin"  <?php echo $admin ?> />	
+</td></tr>
+<tr><td class="td1Form" style="width:140px;text-align:right;"></td>
+		<td class="td2Form">
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfiltp" id="perfiltp"  <?php echo $perfiltp ?> /><label for="perfiltp">Termo de Parceria&nbsp;</label><br>
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfilrh" id="perfilrh"  <?php echo $perfilrh ?> /><label for="perfilrh">Cadastro de Consultores&nbsp;</label><br>
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfilfin" id="perfilfin"  <?php echo $perfilfin ?> /><label for="perfilfin">Financeiro&nbsp;</label><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfilfin_inserir" id="perfildoc_inserir"  <?php echo $perfilfin_inserir ?> /><label for="perfilfin_inserir">&nbsp;- Inserir Lançamentos&nbsp;</label><br>
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfilos" id="perfilos"  <?php echo $perfilos ?> /><label for="perfilos">Ordem de Serviço&nbsp;</label><br>
+		<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfildoc" id="perfildoc"  <?php echo $perfildoc ?> /><label for="perfildoc">Documentos&nbsp;</label><br>		
+		&nbsp;&nbsp;&nbsp;&nbsp;<input dojoType= "dijit.form.CheckBox" type="checkbox" name="perfildoc_inserir" id="perfildoc_inserir"  <?php echo $perfildoc_inserir ?> /><label for="perfildoc_inserir">&nbsp;- Inserir&nbsp;</label><br>
+</td></tr>
+<!--  Botão Salvar -->
+<tr><td></td>
+<td class="tdButtonForm">
+<button id="btnSalvar" dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave">
+Salvar
+<script type="dojo/method" event="onClick">
+	var salvar=confirm("Confirma salvar Usuário?");
+
+	if (salvar==1){
+		if (document.forms["myform"].nome.value==""){
+			alert("Por favor, preencha o campo [nome].");
+			document.forms["myform"].nome.focus();
+			return;
+		}
+		if (document.forms["myform"].login.value==""){
+			alert("Por favor, preencha o campo [Login].");
+			document.forms["myform"].login.focus();
+			return;
+		}
+		if (document.forms["myform"].email.value==""){
+			alert("Por favor, preencha o campo [email].");
+			document.forms["myform"].email.focus();
+			return;
+		}
+		document.forms["myform"].submit();
+	}
+</script>
+</button>
+<br><br>
+<a href="<?php echo ROOT_DIR;?>/user/resetarsenha?iduser=<?php echo $this->iduser;?>">Resetar Senha</a>
+<br><br>
+</td></tr>
+</table>
+</form>
+

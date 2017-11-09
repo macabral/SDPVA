@@ -1,0 +1,233 @@
+<!-- 
+Visualização de gráficos de diagnóstico
+diagnoticoController
+-->
+<?php if (!empty($this->errmsg)) { ?>
+<div class="alert alert-success fade in">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <?php echo $this->errmsg; ?>
+</div>
+<?php } ?>
+<div class="row">
+
+    <div class="col-md-2">
+        <form name="myform" method="post" action="<?php echo APPLICATION_DIR; ?>/diagnostico">
+            <h3><strong>Diagnóstico</strong></h3><br>
+            <h4>Tipo de Gráfico</h4>
+            <input type="radio" value="barbela" name="tipografico[]" onclick="fSubmit();" <?php echo $this->sel_barbela; ?>> Barbela<br>
+            <input type="radio" value="seta" name="tipografico[]" onclick="fSubmit();" <?php echo $this->sel_seta; ?>> Seta<br><br>
+            <h4>Seleção de Pista</h4>
+            <input type="radio" value="9" name="pista[]" onclick="fSubmit();" <?php echo $this->sel_pista1; ?>> Pista 09<br>
+            <input type="radio" value="27" name="pista[]" onclick="fSubmit();" <?php echo $this->sel_pista2; ?>> Pista 27<br><br>
+            <h4>Seleção de Horário</h4>
+            <input type="radio" value="3" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr3; ?>> 3 Horas<br>
+            <input type="radio" value="6" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr6; ?>> 6 Horas<br>
+            <input type="radio" value="12" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr12; ?>> 12 Horas<br>
+            <input type="radio" value="24" name="hora[]" onclick="fSubmit();" <?php echo $this->sel_hr24; ?>> 24 Horas<br>
+            <br><br>
+	    <img src="<?php echo APP_IMAGES . 'rosadosventos.png' ?>">
+        </form>
+    </div>
+    <div class="col-md-8">
+        <center><img src="<?php echo APP_IMAGES . $this->pistagr; ?>" width="10%" height="10%"></center>
+        <center><a href="#" onclick="fExibeGrafico(0);"><img src="<?php echo APP_GRAPH . $this->local . "/" . $this->grafico; ?>?12345678890.1234" width="88%" ></a>
+            <img src="<?php echo APP_IMAGES . 'paleta.png' ?>" height="20%"></center>
+    </div>
+    <div class="col-md-2" style="text-align: center; background-color: #a5c4cf;">
+        <br />
+        <h3><strong>Alertas</strong></h3>
+        <br />
+        <h5><?php echo $this->local . " - Pista: " . $this->pista; ?></h5>
+        <strong><?php echo $this->dataProcesso; ?>Z</strong>
+        <br /><br />
+
+        <h6>
+            <?php if ($this->AlertaVelCauda) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(1);">Velocidade de Cauda</a>
+        </h6>
+        <?php echo $this->VelocidadeCauda; ?>
+
+        <h6>
+            <?php if ($this->AlertaVelProa) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(2);">Velocidade de Proa</a>
+        </h6>
+        <?php echo $this->VelocidadeProa; ?>
+
+        <h6>
+            <?php if ($this->AlertaVelTE) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(3);">Velocidade de Través Esquerdo</a>
+        </h6>
+        <?php echo $this->VelocidadeTravesEsquerdo; ?>
+
+        <h6>
+            <?php if ($this->AlertaVelTD) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(4);">Velocidade de Través Direito</a>
+        </h6>
+        <?php echo $this->VelocidadeTravesDireito; ?>
+
+        <h6>
+            <?php if ($this->AlertaVC) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(5);">Variação de Cauda</a>
+        </h6>
+        <?php echo $this->VariacaoCauda; ?>
+
+        <h6>
+            <?php if ($this->AlertaVP) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(6);">Variação de Proa</a>
+        </h6>
+        <?php echo $this->VariacaoProa; ?>
+
+        <h6>
+            <?php if ($this->AlertaVTD) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(7);">Variação de Través Direito</a>
+        </h6>
+        <?php echo $this->VariacaoTravesDir; ?>
+
+        <h6>
+            <?php if ($this->AlertaVTE) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#"  onclick="fExibeGrafico(8);">Variação de Través Esquerdo</a>
+        </h6>
+        <?php echo $this->VariacaoTravesEsq; ?>
+
+        <h6>
+            <?php if ($this->AlertaW) { ?>
+                <img src="<?php echo APP_IMAGES; ?>alerta.png">
+            <?php } ?>
+            <a href="#" onclick="fExibeGrafico(9);">Windshear</a>
+        </h6>
+        <?php echo $this->Windshear; ?>
+        <br /><br /><br />
+
+    </div>
+    <br /><br />
+        <table class="table emsbox">
+        <thead>
+            <tr>
+                <th class="thcenter">EMS - <?php echo $this->emsdate; ?>Z</th>
+            </tr>
+            <tr>
+                <th class="thcenter">Pista</th>
+                <th class="thcenter">Direção média de 2 min<br />(Magnética|Geográfica)</th>
+                <th class="thcenter">Velocidade média de 2 min</th>
+                <th class="thcenter">Direção média de 10 min<br />(Magnética|Geográfica)</th>
+                <th class="thcenter">Velocidade média de 10 min</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <?php  foreach($this->emsData as $d) {
+                $geo1 = $d['wd2a']-20;
+                if ($geo1 < 0) {
+                  $geo1 = 360 + $geo1;
+                }
+                $geo2 = $d['wd10a']-20;
+                if ($geo2 < 0) {
+                  $geo2 = 360 + $geo2;
+                }
+            ?>
+            <tr>
+                <td><?php echo $d['runway']; ?></td>
+                <td><?php echo $d['wd2a']; ?>°  | <?php echo $geo1; ?>°</td>
+                <td><?php echo (int) $d['ws2a']; ?> kt</td>
+                <td><?php echo $d['wd10a']; ?>° | <?php echo $geo2; ?>°</td>
+                <td><?php echo (int) $d['ws10a']; ?> kt</td>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+        
+</div>
+<script type="text/javascript">
+    function fSubmit() {
+        myform.submit();
+    }
+    function fExibeGrafico(grafico) {
+        var pista = '<?php echo $this->pista; ?>';
+        if (pista == '09') {
+            switch (grafico) {
+                case 0:
+                    var gname = "<?php echo $this->local . "/" . $this->grafico; ?>";
+                    break;
+                case 1:
+                    var gname = "<?php echo $this->local; ?>/vel_cauda.png";
+                    break;
+                case 2:
+                    var gname = "<?php echo $this->local; ?>/vel_proa.png";
+                    break;
+                case 3:
+                    var gname = "<?php echo $this->local; ?>/vel_traves_esq.png";
+                    break;
+                case 4:
+                    var gname = "<?php echo $this->local; ?>/vel_traves_dir.png";
+                    break;
+                case 5:
+                    var gname = "<?php echo $this->local; ?>/var_cauda.png";
+                    break;
+                case 6:
+                    var gname = "<?php echo $this->local; ?>/var_proa.png";
+                    break;
+                case 7:
+                    var gname = "<?php echo $this->local; ?>/var_traves_dir.png";
+                    break;
+                case 8:
+                    var gname = "<?php echo $this->local; ?>/var_traves_esq.png";
+                    break;
+                case 9:
+                    var gname = "<?php echo $this->local; ?>/windshear6x1.png";
+                    break;
+            }
+        } else {
+            switch (grafico) {
+                case 0:
+                    var gname = "<?php echo $this->local . "/" . $this->grafico; ?>";
+                    break;
+                case 1:
+                    var gname = "<?php echo $this->local; ?>/vel_cauda_27.png";
+                    break;
+                case 2:
+                    var gname = "<?php echo $this->local; ?>/vel_proa_27.png";
+                    break;
+                case 3:
+                    var gname = "<?php echo $this->local; ?>/vel_traves_esq_27.png";
+                    break;
+                case 4:
+                    var gname = "<?php echo $this->local; ?>/vel_traves_dir_27.png";
+                    break;
+                case 5:
+                    var gname = "<?php echo $this->local; ?>/var_cauda_27.png";
+                    break;
+                case 6:
+                    var gname = "<?php echo $this->local; ?>/var_proa_27.png";
+                    break;
+                case 7:
+                    var gname = "<?php echo $this->local; ?>/var_traves_dir_27.png";
+                    break;
+                case 8:
+                    var gname = "<?php echo $this->local; ?>/var_traves_esq_27.png";
+                    break;
+                case 9:
+                    var gname = "<?php echo $this->local; ?>/windshear6x1.png";
+                    break;
+            }
+        }
+        var txt = '<?php echo  APP_GRAPH; ?>' + gname + '?no-cache="' + Number(new Date()) + '"';
+        window.open(txt, "SDPVA", "directories=no,status=0,toolbar=0,width=600,height=500,location=no,menubar=no");
+    }
+</script>
+

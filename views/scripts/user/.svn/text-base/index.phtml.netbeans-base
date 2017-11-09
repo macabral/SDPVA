@@ -1,0 +1,45 @@
+<div id="msg"><?php echo $this->mensagem; ?></div>
+<hr class="space" />
+<a id='alnk' href="<?php echo ROOT_DIR; ?>">Voltar</a> <a id='alnk' href="<?php echo ROOT_DIR; ?>/user/caduser?iduser=0">Adicionar Usuário</a>
+<hr class="space" />
+<table id="mytb" width='100%'>
+    <thead>    
+        <tr>
+            <th>Nome</th>
+            <th>Login</th>
+            <th>email</th>
+            <th>Admin</th>
+            <th>Ativo</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        $cont=0;
+        foreach ($this->paginator as $d) {
+            $cont++;
+               	if (fmod($cont, 2)==0){ $color = TABLE_PAR; }else{ $color = TABLE_IMPAR; }	
+        ?>
+        <tr bgcolor="<?php echo $color ?>" onMouseOver="this.style.background='#D3D3D3'" onMouseOut="this.style.background='<?php echo $color ?>'">
+            <td><?php echo $this->escape($d['nome'])?></td>
+            <td><?php echo $this->escape($d['login'])?></td>
+            <td><?php echo $this->escape($d['email'])?></td>
+            <td><?php if ($d['admin']==1){ echo 'Sim'; } else { echo 'Não';}?></td>
+            <td><?php if ($d['ativo']==1){ echo 'Sim'; } else { echo 'Não';}?></td>
+            <td>
+            <a href="<?php echo ROOT_DIR;?>/user/caduser?iduser=<?php echo $d['idusu']?>" title="Editar"><img src="<?php echo APP_IMAGES; ?>/edit.png"></a>
+			<a href="#" onClick="fExclui(<?php echo $d['idusu']?>,'<?php echo $d["login"]?>');" title='Excluir Usuário'><img src="<?php echo APP_IMAGES; ?>/delete.png"></a>
+            </td>
+        </tr>
+        <?php }?>
+    </tbody>
+</table>
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'paginator/pagination.phtml'); ?>
+<script language="JavaScript">
+function fExclui(iduser,codigo){
+	var salvar=confirm("Confirma EXCLUIR a Usuário ["+codigo+"]?");
+	if (salvar==1){
+		location="<?php echo ROOT_DIR; ?>/user/exclui?iduser="+iduser;
+	}
+}
+</script>
