@@ -174,7 +174,7 @@ class ServicesController extends Zend_Controller_Action {
             if (file_exists($arq)) {
                 $xml = file_get_contents($arq, true);
             } else {
-                $xml = '<?xml version="1.0" encoding="UTF-8"?><sdpva><error>Arquivo não encontrado.</error></sdpva>';
+                $xml = '<?xml version="1.0" encoding="UTF-8"?><sdpva><error>Arquivo nï¿½o encontrado.</error></sdpva>';
             }
         } catch (Exception $e) {
              $xml = '<?xml version="1.0" encoding="UTF-8"?><sdpva><error>Um erro foi encontrado: ' . $e->getMessage() . '</error></sdpva>';
@@ -388,14 +388,14 @@ class ServicesController extends Zend_Controller_Action {
         // processa alertas
         $this->_helper->Alertas->alertas($local, $dt);
 
-        // processa solicitação de dados da EMS
+        // processa solicitaï¿½ï¿½o de dados da EMS
         $this->_helper->getEMS->getems($local,$dt);
 
         // processa entrada RNA
-        // a RNA chama o processamento do prognóstico
+        // a RNA chama o processamento do prognï¿½stico
         $this->_helper->Entradarna->entradarna($local,$dt);
 
-        // gerar gráficos
+        // gerar grï¿½ficos
         $this->_helper->Graficos->graficos();
 
         // enviar arquivos XML para clientes cadastrados
@@ -426,11 +426,11 @@ class ServicesController extends Zend_Controller_Action {
 	print_r($datahr);
         $processamentodb->gravaData($datahr);
 
-        // processa solicitação de dados da EMS
+        // processa solicitaï¿½ï¿½o de dados da EMS
         $this->_helper->getEMS->getems($local,$dt);
 
         // processa entrada RNA
-        // a RNA chama o processamento do prognóstico
+        // a RNA chama o processamento do prognï¿½stico
         $result  = $this->_helper->Entradarna->entradarna($local,$dt);
 
         // enviar arquivos XML para clientes cadastrados
@@ -567,6 +567,11 @@ class ServicesController extends Zend_Controller_Action {
           $this->view->layout()->disableLayout();
 	  $this->_helper->Entradarna->entradarna();
     }
+    
+    public function testemsAction() {
+        
+    }
+    
 
     
 }
