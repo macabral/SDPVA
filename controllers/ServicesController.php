@@ -568,8 +568,8 @@ class ServicesController extends Zend_Controller_Action {
 	  $this->_helper->Entradarna->entradarna();
     }
     
-    public function testemsAction() {
-        
+    public function testemsAction() {   
+                    //
     }
     
 
